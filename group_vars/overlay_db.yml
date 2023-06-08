@@ -1,0 +1,53 @@
+anycastgateway:
+  mac: '0000.2222.3333'
+
+vrfs:
+  test:
+    afs:
+      - ipv4
+    id: '100'  
+    vlan: '4000'
+    description: 'L3VNI-VRF-TEST'
+
+  test2:
+    afs:
+      - ipv4
+    id: '101'  
+    vlan: '4001'
+    description: 'L3VNI-VRF-TEST2'
+
+vlans:
+# VRF PROD #
+  101:
+    type: 'access'
+    description: 'prod_vlan_101'
+    vrf: 'test'
+    svi:
+      ipv4: '10.101.17.1 255.255.255.224'
+      status: 'enabled'
+
+  102:
+    type: 'access'
+    description: 'prod_vlan_102'
+    vrf: 'test'
+    svi:
+      ipv4: '10.102.17.65 255.255.255.192'
+      status: 'disabled'
+
+  103:
+    type: 'access'
+    description: 'vmotion_vlan_103'
+    vrf: 'test'
+
+  104:
+    type: 'access'
+    description: 'preprod_vlan_104'
+    vrf: 'test2'
+    svi:
+      ipv4: '10.104.18.65 255.255.255.192'
+      status: 'disabled'
+
+  105:
+    type: 'access'
+    description: 'preprod_vlan_105'
+    vrf: 'test2'

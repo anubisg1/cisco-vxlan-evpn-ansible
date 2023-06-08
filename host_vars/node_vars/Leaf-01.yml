@@ -1,0 +1,26 @@
+hostname: 'LEAF-1'
+
+interfaces:
+  Loopback0:
+    name: 'ROUTER-ID'
+    ip_address: '192.168.210.11'
+    subnet_mask: '255.255.255.255'
+    type: 'loopback'
+
+  Loopback1:
+    name: 'VTEP'
+    ip_address: '192.168.211.11'
+    subnet_mask: '255.255.255.255'
+    type: 'loopback'
+
+  GigabitEthernet1/0/24:
+    name: 'UNDERLAY-FABRIC'
+
+#layer 3 interface
+overlay_interfaces:
+  Loopback100:
+    description: 'UNIQUE-LOOPBACK-VRF-TEST'
+    ip_address: '10.1.10.11'
+    subnet_mask: '255.255.255.255'
+    loopback: 'yes'
+    vrf: 'test'

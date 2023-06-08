@@ -1,0 +1,29 @@
+{#
+This module is configuring global BGP process and neighbor parameters
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{# initial BGP process configuration #}
+!
+router bgp {{ bgp.as_number }}
+    bgp log-neighbor-changes
+    bgp router-id interface {{ underlay.router_id }}
+    no bgp default ipv4-unicast
+    bgp update-delay 1
+    bgp graceful-restart
+    {% for neighbor in bgp.spines %}
+        neighbor {{ neighbor }} remote-as {{ bgp.as_number }}
+        neighbor {{ neighbor }} password {{ bgp.password }}
+        neighbor {{ neighbor }} update-source {{ underlay.router_id }}
+        neighbor {{ neighbor }} fall-over bfd
+    {% endfor %}
+    !
+    address-family l2vpn evpn
+      {% for neighbor in bgp.spines %}
+          neighbor {{ neighbor }} activate
+          neighbor {{ neighbor }} send-community both
+      {% endfor %}
+    exit-address-family
+    {# no address-family ipv4 #}
+    !

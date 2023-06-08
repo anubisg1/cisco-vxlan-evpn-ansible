@@ -1,0 +1,7 @@
+ansible_connection: ansible.netcommon.network_cli
+ansible_command_timeout: 60
+ansible_network_os: cisco.ios.ios
+ansible_python_interpreter: "python"
+ansible_user: admin
+ansible_ssh_pass: cisco123
+#ansible_ssh_pass: '{{ lookup("env", "ANSIBLE_PASSWORD") }}'

@@ -1,0 +1,37 @@
+{#
+This module is configuring, deleting or modifing nvi config.
+If action is not set in the configurations, it is "add" by default.
+
+Mutable paramiters:
+- member vni // mandatory
+
+Immutable paramiters:
+- source interface // mandatory
+- host-reachability protocol // mandatory
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+!
+interface nve 1
+
+{% if vrfs is defined %}
+    {% for vrf in vrfs %}
+
+        {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+            {% set l3vni = vrfs[vrf].id ~ "0000" %}
+
+            {# Checking an action for all vrf #}
+            {% set action = vrfs[vrf].action | default ('add') %}
+            {% if action == 'delete' %}
+                {% set prefix = 'no' %}
+            {% else %}
+                {% set prefix = '' %}
+            {% endif %}
+
+            {{prefix}} member vni {{ l3vni }} vrf {{ vrf }}
+
+        {% endif %}
+
+   {% endfor %}
+{% endif %}
