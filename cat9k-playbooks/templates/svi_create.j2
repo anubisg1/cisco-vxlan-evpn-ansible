@@ -14,12 +14,7 @@ If action is not set in the configurations, it is "add" by default.
                     !
                     no interface Vlan{{vlan}}
                 {% elif action == 'add' %}
-                    {% if vlans[vlan].type == 'access' %}
-                        !
-                        interface Vlan{{vlan}}
-                        vrf forwarding {{ vlans[vlan].vrf }}
-                        ip address {{vlans[vlan].svi.ipv4}}
-                    {% elif vlans[vlan].type == 'non_vxlan' %}
+                    {% if vlans[vlan].type == 'access' or vlans[vlan].type == 'non_vxlan' %}
                         !
                         interface Vlan{{vlan}}
                         vrf forwarding {{ vlans[vlan].vrf }}
