@@ -4,6 +4,7 @@
   hosts: leaf
   gather_facts: false
   connection: local
+  
   tasks:  
           # Collecting the show_version data
           - name: Collect "show version"

@@ -41,7 +41,6 @@
               when: file_state.stat.exists
 
           # Following tasks are skippped if host_vars/access_intf/<hostname>.yml is not present
-
           - name: Process interfaces
             when: (get_Leaf_vars is defined) and (get_Leaf_vars.access_interfaces is defined)
             block:

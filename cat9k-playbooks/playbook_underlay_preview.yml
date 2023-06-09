@@ -17,7 +17,6 @@
     underlay_dict_spine:
       './templates/bgp_global_spines.j2': 'bgp spine block'
 
-
   tasks:
           # Set db file path and load underlay vars
           - name: Load and process underlay input file

@@ -7,7 +7,6 @@
     save_configuration: true
 
   tasks:
-
           # Set db file path and load overlay_db
           - name: Load and process overlay input file
             run_once: true

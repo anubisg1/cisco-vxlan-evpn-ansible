@@ -10,7 +10,6 @@
     - "../group_vars/underlay_db.yml"
   vars:
     incremental_run: false
-    
     vrf_dict:
       './templates/vrf_definition.j2': 'vrf block'
       './templates/bgp_l2vpn_ipv46_per_vrf.j2': 'bgp l2vpn ipv46 per vrf block'

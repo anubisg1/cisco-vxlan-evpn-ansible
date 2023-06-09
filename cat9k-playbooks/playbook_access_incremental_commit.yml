@@ -3,6 +3,7 @@
 - name: Initialising variable for leaf-s
   hosts: leaf
   gather_facts: false
+  
   tasks:    
           - set_fact:
               incremental: true

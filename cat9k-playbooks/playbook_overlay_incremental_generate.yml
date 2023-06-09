@@ -3,6 +3,7 @@
 - name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
   hosts: leaf
   gather_facts: false 
+  
   tasks:
           - name: Locate files in ../host_vars/inc_vars dir
             find:

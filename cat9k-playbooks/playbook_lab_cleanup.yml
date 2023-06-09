@@ -4,8 +4,8 @@
   hosts: all
   gather_facts: false
   connection: network_cli
+  
   tasks:  
-
           - name: DESTRUCTIVE OPERATION LAB ONLY
             pause:
               prompt: Please confirm you want to COMPLETELY ERASE THE SWITCHES CONFIGURATION! Press return to continue. Press Ctrl+c and then "a" to abort

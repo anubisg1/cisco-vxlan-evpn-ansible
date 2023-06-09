@@ -18,7 +18,6 @@
       './templates/nve_vni_assign.j2': 'nve block'
 
   tasks:
-
           # Set db file path and load overlay_db
           - name: Load and process overlay input file
             run_once: true
