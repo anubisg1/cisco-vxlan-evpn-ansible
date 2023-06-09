@@ -4,14 +4,14 @@
       file: "{{ input_vars_path }}group_vars/overlay_db.yml"
       name: overlay_data
 
-  - name: Get access-type vlans
+  - name: Get vlans
     block:
       - set_fact: 
           vlan_id_all: []
 
       - set_fact: 
           vlan_id_all: "{{ vlan_id_all + [ item ] }}"
-        when: overlay_data['vlans'][item]['type'] == 'access'
+        #when: overlay_data['vlans'][item]['type'] == 'access'
         loop: "{{ overlay_data.vlans.keys() }}"  
 
       - set_fact: 

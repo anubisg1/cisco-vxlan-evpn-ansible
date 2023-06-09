@@ -8,24 +8,22 @@ If action is not set in the configurations, it is "add" by default.
 {% if vlans is defined %}
     {% for vlan in vlans %}
         {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
-            {% if vlans[vlan].type == 'access' %}
-                {% for _vrf in vrfs %}
-                    {% if vlans[vlan].vrf == _vrf %}
-                        {% set l3vni = vrfs[_vrf].id ~ "0000" %}
-                        {% set l2vni = (l3vni|int) + (vlan|int) %}
-                        !
-                        vlan configuration {{ vlan }}
+            {% for _vrf in vrfs %}
+                {% if vlans[vlan].vrf == _vrf %}
+                    {% set l3vni = vrfs[_vrf].id ~ "0000" %}
+                    {% set l2vni = (l3vni|int) + (vlan|int) %}
+                    !
+                    vlan configuration {{ vlan }}
 
-                        {% set action = vlans[vlan].action | default ('add') %}
-                        {% if action == 'delete' %}
-                            {% set prefix = 'no' %}
-                        {% else %}
-                            {% set prefix = '' %}
-                        {% endif %}
-                            {{prefix}} member evpn-instance {{ vlan }} vni {{ l2vni }}
+                    {% set action = vlans[vlan].action | default ('add') %}
+                    {% if action == 'delete' %}
+                        {% set prefix = 'no' %}
+                    {% else %}
+                        {% set prefix = '' %}
                     {% endif %}
-                {% endfor %}
-            {% endif %}
+                        {{prefix}} member evpn-instance {{ vlan }} vni {{ l2vni }}
+                {% endif %}
+            {% endfor %}
         {% endif %}
     {% endfor %}
 {% endif %}
