@@ -17,7 +17,6 @@ vrfs:
     description: 'L3VNI-VRF-TEST2'
 
 vlans:
-# VRF PROD #
   101:
     description: 'prod_vlan_101'
     vrf: 'test'
