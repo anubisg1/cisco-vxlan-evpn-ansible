@@ -28,7 +28,7 @@ To run those ansibles playbook, you will require:
 
 ## General description ##
 
-<img width="1192" alt="ansible" src="https://user-images.githubusercontent.com/107021162/175528526-5d8b59ea-7f39-4d78-ac95-b08fed9ebbf6.png">
+<img width="1192" alt="ansible" src="./ansible-operations.png">
 
 ## Installation ##
 
