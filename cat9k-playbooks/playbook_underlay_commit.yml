@@ -21,7 +21,6 @@
             include_vars: 
               file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
 
-
           - name: Load vars from underlay input file
             include_vars: 
               file: "{{ input_vars_path }}group_vars/underlay_db.yml"
