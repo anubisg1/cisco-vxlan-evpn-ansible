@@ -46,15 +46,15 @@
             when: (get_Leaf_vars is defined) and (get_Leaf_vars.access_interfaces is defined)
             block:
             - set_fact:
-                execute_task: "../subtasks/subtask_acc_intf_preview.yml"
+                execute_task: "./subtasks/subtask_acc_intf_preview.yml"
 
             - name: Process trunk interfaces
               when: get_Leaf_vars.access_interfaces.trunks is defined
-              include_tasks: ../subtasks/subtask_acc_intf_trunk.yml
+              include_tasks: ./subtasks/subtask_acc_intf_trunk.yml
 
             - name: Process access interfaces
               when: get_Leaf_vars.access_interfaces.access is defined
-              include_tasks: ../subtasks/subtask_acc_intf_access.yml
+              include_tasks: ./subtasks/subtask_acc_intf_access.yml
           
             - name: Copy configurations to respective file ( <inventory_hostname>-{add/inc}-intf.txt ) under 'preview_files' folder
               copy:
