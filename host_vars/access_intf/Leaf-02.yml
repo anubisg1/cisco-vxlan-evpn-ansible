@@ -6,4 +6,3 @@ access_interfaces:
   access:
     - GigabitEthernet1/0/7:
         access_vlan: 102
-

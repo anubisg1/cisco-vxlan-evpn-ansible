@@ -5,4 +5,3 @@ access_interfaces:
     - GigabitEthernet1/0/7:
         trunk_vlan_list: 101-102
     - GigabitEthernet1/0/8
-
