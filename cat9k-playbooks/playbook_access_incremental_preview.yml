@@ -15,5 +15,8 @@
     - set_fact:
         incremental: true
 
+- name: Write DAG incremental info to files in host_vars/inc_vars folder
+  import_playbook: playbook_overlay_incremental_generate.yml
+  
 - name: Import tasks from playbook_access_add_preview.yml
   import_playbook: playbook_access_add_preview.yml
