@@ -8,14 +8,12 @@ show bgp l2vpn evpn
 show l2route evpn mac
 
 {% if vlans is defined -%}
-{% for ivlan,idata in vlans.items() %}
-  {% if vlans[ivlan].type == 'access' %} 
-     show l2vpn evpn evi {{ivlan}} detail
-     show l2vpn evpn mac evi {{ivlan}}
-     show l2vpn evpn mac ip evi {{ivlan}}
-     show l2fib bridge-domain {{ivlan}} detail
-   {% endif %}
-{% endfor %}
+    {% for ivlan,idata in vlans.items() %}
+       show l2vpn evpn evi {{ivlan}} detail
+       show l2vpn evpn mac evi {{ivlan}}
+       show l2vpn evpn mac ip evi {{ivlan}}
+       show l2fib bridge-domain {{ivlan}} detail
+    {% endfor %}
 {% endif %}
 
 
