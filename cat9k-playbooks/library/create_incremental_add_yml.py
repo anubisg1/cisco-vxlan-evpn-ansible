@@ -141,7 +141,7 @@ def run_module():
 #            access_input=dict(required=False,type='dict'),
 #            sec_output=dict(required=False,type='list'),
             tocompare=dict(required=False,type='dict'),
-            overlay_intf=dict(required=False,type='dict'),     
+            overlay_intf=dict(required=False,type='dict'),
     ),
         supports_check_mode=True
     )   
