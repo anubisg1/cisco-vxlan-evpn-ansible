@@ -1,0 +1,25 @@
+{#
+This module is configuring, deleting or modifing l2vpn evpn evi to vlan stitching.
+If action is not set in the configurations, it is "add" by default.
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{% if vrfs is defined %}
+    {% for vrf in vrfs %}
+        {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+            {% set l3vni = vrfs[vrf].id ~ "0000" %}
+            !
+            vlan configuration {{ vrfs[vrf].vlan  }}
+
+            {% set action = vrfs[vrf].action | default ('add') %}
+            {% if action == 'delete' %}
+                {% set prefix = 'no' %}
+            {% else %}
+                {% set prefix = '' %}
+            {% endif %}
+              {{prefix}} member vni {{ l3vni }}
+
+        {% endif %}
+    {% endfor %}
+{% endif %}

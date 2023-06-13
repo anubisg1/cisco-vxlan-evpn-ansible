@@ -1,0 +1,9 @@
+# layer 2 interfaces
+
+access_interfaces:
+  trunks:
+    - GigabitEthernet1/0/6
+  access:
+    - GigabitEthernet1/0/7:
+        access_vlan: 102
+

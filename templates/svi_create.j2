@@ -1,0 +1,43 @@
+{#
+This module is configuring, deleting or modifing SVI.
+If action is not set in the configurations, it is "add" by default.
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{% if vlans is defined %}
+    {% for vlan in vlans %}
+        {% if vlans[vlan].svi is defined %}
+            {% if ( (svi_cli is defined and vlan in svi_cli) or (svi_cli is not defined) ) %}
+                {% set action = vlans[vlan].svi.action | default ('add') %}
+                {% if action == 'delete' %}
+                    !
+                    no interface Vlan{{vlan}}
+                {% elif action == 'add' %}
+                    {% if vlans[vlan].type == 'access' %}
+                        !
+                        interface Vlan{{vlan}}
+                        vrf forwarding {{ vlans[vlan].vrf }}
+                        ip address {{vlans[vlan].svi.ipv4}}
+                    {% elif vlans[vlan].type == 'non_vxlan' %}
+                        !
+                        interface Vlan{{vlan}}
+                        vrf forwarding {{ vlans[vlan].vrf }}
+                        ip address {{vlans[vlan].svi.ipv4}}
+                    {% endif %}
+
+                    {% if vlans[vlan].svi.status  == 'enabled' %}
+                        no shut
+                    {% else %}
+                        shut
+                    {% endif %}
+
+                    {# Check if static MAC configuration is needed on the SVI #}
+                    {% if anycastgateway.mac is defined and vlans[vlan].type == 'access' %}
+                        mac-address {{ anycastgateway.mac }}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

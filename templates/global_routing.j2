@@ -1,0 +1,14 @@
+{#
+This module is enabling IPv4 unicast, IPv6 unicast  and IPv4 multicast routing for global routing table
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{# Enabling IPv4 unicast routing #}
+ip routing
+!
+system mtu 9198
+vtp mode off
+!
+int vlan 1
+shut

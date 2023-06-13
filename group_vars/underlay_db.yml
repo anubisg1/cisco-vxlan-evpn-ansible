@@ -1,0 +1,21 @@
+stp:
+  priority: '0'
+
+domain:
+  name: 'mylab.lab'
+
+underlay:
+  router_id: 'Loopback0'
+  vtep_name: 'Loopback1'
+
+ospf:
+  password: 'cico123'
+  area: '0.0.0.10'
+
+bgp:
+  as_number: '65010'
+  password: 'cico123'
+  leafs_range: '192.168.210.0/24'
+  spines:
+  - '192.168.210.1'
+  - '192.168.210.2'

@@ -1,0 +1,36 @@
+# This is the input file for playbook_overlay_incremental_preview.yml and playbook_overlay_incremental_commit.yml
+# If there are multiple VRFs or Vlans in the overlay_db.yml and if you want to provision only selective
+# ones or all of them, then declare the respective VRFs/Vlan under their section as shown below 
+#
+# List the VRFs to be added under 'vrfs' keyword
+# List the Vlans to be added under 'vlans' keyword
+#
+# ______________________________________________
+# __________ EXAMPLE SCENARIOS _________________
+# ______________________________________________
+#
+# Example-1: Adds blue and green vrfs and vlan 101 and 102
+# 
+#   vrfs:
+#      - blue             <--------- adds blue and green vrfs
+#      - green
+#   vlans:
+#      - 101             <--------- adds vlan 102 and 102
+#      - 102
+# Example-2: Adds all the vrfs and all vlans which are not provisioned in the device 
+#
+#   vrfs:
+#      - all            <--------- adds all vrfs which are not provisioned in the device
+#
+#   vlans:
+#      - all             <--------- adds all vlans which are not provisioned in the device
+#             
+# ______________________________________________
+# ______________________________________________
+# ______________________________________________
+
+vrfs:
+   - all
+
+vlans:
+   - all

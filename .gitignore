@@ -1,0 +1,4 @@
+ansible/
+playbooks-to-migrate/
+old-templates/
+docs/

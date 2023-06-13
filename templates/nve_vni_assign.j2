@@ -1,0 +1,36 @@
+{#
+This module is configuring, deleting or modifing nvi config.
+If action is not set in the configurations, it is "add" by default.
+
+Mutable paramiters:
+- member vni // mandatory
+
+Immutable paramiters:
+- source interface // mandatory
+- host-reachability protocol // mandatory
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+!
+interface nve 1
+{% if vlans is defined %}
+    {% for vlan in vlans %}
+        {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
+            {% for _vrf in vrfs %}
+                {% if vlans[vlan].vrf == _vrf %}
+                    {% set l3vni = vrfs[_vrf].id ~ "0000" %}
+                    {% set l2vni = (l3vni|int) + (vlan|int) %}
+
+                    {% set action = vlans[vlan].action | default ('add') %}
+                    {% if action == 'delete' %}
+                        {% set prefix = 'no' %}
+                   {% else %}
+                       {% set prefix = '' %}
+                   {% endif %}
+                     {{prefix}} member vni {{ l2vni }} ingress-replication
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

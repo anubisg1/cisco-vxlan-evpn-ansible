@@ -1,0 +1,20 @@
+{#
+This module configures global l2vpn evpn definition.
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{# global l2vpn evpn definition#}
+!
+l2vpn evpn
+  logging peer state
+  replication-type ingress
+  router-id {{ underlay.router_id }}
+  route-target auto vni
+!
+interface nve1
+ shut
+ no ip address
+ source-interface {{ underlay.vtep_name }}
+ host-reachability protocol bgp
+ no shut
