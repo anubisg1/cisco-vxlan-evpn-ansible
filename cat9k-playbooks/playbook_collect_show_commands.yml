@@ -6,8 +6,8 @@
   connection: network_cli
   vars_files:
     - "../group_vars/overlay_db.yml"
+    
   tasks:  
-
           - name: construct show commands from host var file for leafs
             when: inventory_hostname in groups['leaf']
             copy:
@@ -24,7 +24,6 @@
             ios_command:
                commands:
                    "{{ leaf_command_buf.stdout_lines }}" 
-
             register: leaf_output
 
           - name: save outputs to output file for Leafs
@@ -50,7 +49,6 @@
             ios_command:
                commands:
                    "{{ spine_command_buf.stdout_lines }}" 
-
             register: spine_output
 
           - name: save outputs to output file for Spines
