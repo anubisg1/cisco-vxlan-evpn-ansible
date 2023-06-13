@@ -1,0 +1,72 @@
+---
+
+- name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
+  hosts: all
+  gather_facts: false
+  vars:
+    underlay_block: ""
+    underlay_dict_global:
+      './templates/hostname.j2': 'hostname block'
+      './templates/global_routing.j2': 'global routing block'
+      './templates/underlay_interfaces.j2': 'underlay interface block'
+      './templates/ospf_interfaces.j2': 'ospf interface block'
+    underlay_dict_leaf:
+      './templates/leafs_stp_global.j2': 'stp leaf block'
+      './templates/bgp_global_leafs.j2': 'bgp leaf block'
+      './templates/l2vpn_evpn_global.j2': 'l2vpn-evpn leaf block'
+    underlay_dict_spine:
+      './templates/bgp_global_spines.j2': 'bgp spine block'
+
+
+  tasks:
+          # Set db file path and load underlay vars
+          - name: Load and process underlay input file
+            run_once: true
+            block:
+            - name: set underlay vars input file path if not already set
+              when: input_vars_path is not defined
+              set_fact: 
+                input_vars_path: "../"
+
+          - name: Load vars from node_vars/<host>.yml input file
+            include_vars: 
+              file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
+
+          - name: Load vars from underlay input file
+            include_vars: 
+              file: "{{ input_vars_path }}group_vars/underlay_db.yml"
+
+          - name: Read global underlay template files
+            set_fact:
+              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_global[item.key] }} {{ lookup('template', item.key ) }}"
+            with_dict: "{{ underlay_dict_global }}"
+
+          - name: Read Leafs underlay template files
+            when: inventory_hostname in groups['leaf']
+            set_fact:
+              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_leaf[item.key] }} {{ lookup('template', item.key ) }}"
+            with_dict: "{{ underlay_dict_leaf }}"
+
+          - name: Read Spines underlay template files
+            when: inventory_hostname in groups['spine'] 
+            set_fact:
+              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_spine[item.key] }} {{ lookup('template', item.key ) }}"
+            with_dict: "{{ underlay_dict_spine }}"
+
+          - name: Render template files output
+            set_fact:
+              rendered: "{{ underlay_block | regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') | regex_replace('\\n(\\s+)','\n') | regex_replace('! ','\n\n! ') }}"
+
+          - name: Copy configurations to the respective file ( <hostname>-underlay.txt ) under 'preview_files' folder
+            copy:
+              dest: preview_files/{{inventory_hostname}}-underlay.txt
+              content: "{{ rendered }}"
+
+- name: Display output file info
+  hosts: localhost
+  gather_facts: false
+  run_once: True
+
+  tasks:
+    - debug:
+        msg: Please refer to <hostname>-underlay.txt in 'preview_files' folder
