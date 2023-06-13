@@ -12,7 +12,7 @@
             when: inventory_hostname in groups['leaf']
             copy:
                 dest: "output/{{inventory_hostname}}-show_commands.txt" 
-                content: "{{ lookup('template', '../templates/leaf_show_command.j2') }}"
+                content: "{{ lookup('template', './templates/leaf_show_command.j2') }}"
 
           - name: cat show commands file of leaf
             when: inventory_hostname in groups['leaf']
@@ -38,7 +38,7 @@
             when: inventory_hostname in groups['spine']
             copy:
                 dest: "output/{{inventory_hostname}}-show_commands.txt" 
-                content: "{{ lookup('template', '../templates/spine_show_command.j2') }}"
+                content: "{{ lookup('template', './templates/spine_show_command.j2') }}"
 
           - name: cat show commands file of Spines
             when: inventory_hostname in groups['spine']

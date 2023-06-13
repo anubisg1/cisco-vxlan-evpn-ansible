@@ -32,77 +32,77 @@
           - name: Configure vrf definition
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/vrf_definition.j2') }}"
+              config: "{{ lookup('template', './templates/vrf_definition.j2') }}"
               diff_match: none 
             register: result
           
           - name: Activate BGP for AF(ipv4/ipv6) per vrf
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/bgp_l2vpn_ipv46_per_vrf.j2') }}"
+              config: "{{ lookup('template', './templates/bgp_l2vpn_ipv46_per_vrf.j2') }}"
               diff_match: none
             register: result
 
           - name: Create Core VRF VLAN
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/vrf_vlan_create.j2') }}"
+              config: "{{ lookup('template', './templates/vrf_vlan_create.j2') }}"
               diff_match: none 
             register: result
 
           - name: Create Core VRF SVI
             when: inventory_hostname in groups['leaf'] 
             cli_config:
-              config: "{{ lookup('template', '../templates/vrf_svi_create.j2') }}"
+              config: "{{ lookup('template', './templates/vrf_svi_create.j2') }}"
               diff_match: none 
             register: result            
 
           - name: Stitch VRF EVI/VNI/VLAN
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/vrf_evi_vni_vlan_stiching.j2') }}"
+              config: "{{ lookup('template', './templates/vrf_evi_vni_vlan_stiching.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure NVE interface for the VRF 
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/vrf_nve_vni_assign.j2') }}"
+              config: "{{ lookup('template', './templates/vrf_nve_vni_assign.j2') }}"
               diff_match: none 
             register: result
 
           - name: Create access VLAN
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/vlan_create.j2') }}"
+              config: "{{ lookup('template', './templates/vlan_create.j2') }}"
               diff_match: none 
             register: result
 
           - name: Create SVI
             when: inventory_hostname in groups['leaf'] 
             cli_config:
-              config: "{{ lookup('template', '../templates/svi_create.j2') }}"
+              config: "{{ lookup('template', './templates/svi_create.j2') }}"
               diff_match: none 
             register: result            
 
           - name: Stitch EVI/VNI/VLAN
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/evi_vni_vlan_stiching.j2') }}"
+              config: "{{ lookup('template', './templates/evi_vni_vlan_stiching.j2') }}"
               diff_match: none 
             register: result
 
           - name: Create overlay interface
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/overlay_interfaces.j2') }}"
+              config: "{{ lookup('template', './templates/overlay_interfaces.j2') }}"
               diff_match: none 
             register: result
           
           - name: Configure NVE interface
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/nve_vni_assign.j2') }}"
+              config: "{{ lookup('template', './templates/nve_vni_assign.j2') }}"
               diff_match: none 
             register: result
 

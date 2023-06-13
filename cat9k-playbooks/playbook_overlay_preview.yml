@@ -6,16 +6,16 @@
   vars: 
     overlay_block: ""
     leaf_ol_dict:
-      '../templates/vrf_definition.j2': 'vrf definition block'
-      '../templates/bgp_l2vpn_ipv46_per_vrf.j2': 'bgp per vrf block'
-      '../templates/vrf_evi_vni_vlan_stiching.j2': 'vrf evi vni vlan stiching block'
-      '../templates/vrf_nve_vni_assign.j2': 'vrf nve vni assign block'
-      '../templates/vrf_svi_create.j2': 'vrf svi create block'
-      '../templates/vlan_create.j2': 'vlan block'
-      '../templates/svi_create.j2': 'svi block'
-      '../templates/evi_vni_vlan_stiching.j2': 'evi vni vlan stiching block'
-      '../templates/overlay_interfaces.j2': 'overlay interface block'
-      '../templates/nve_vni_assign.j2': 'nve block'
+      './templates/vrf_definition.j2': 'vrf definition block'
+      './templates/bgp_l2vpn_ipv46_per_vrf.j2': 'bgp per vrf block'
+      './templates/vrf_evi_vni_vlan_stiching.j2': 'vrf evi vni vlan stiching block'
+      './templates/vrf_nve_vni_assign.j2': 'vrf nve vni assign block'
+      './templates/vrf_svi_create.j2': 'vrf svi create block'
+      './templates/vlan_create.j2': 'vlan block'
+      './templates/svi_create.j2': 'svi block'
+      './templates/evi_vni_vlan_stiching.j2': 'evi vni vlan stiching block'
+      './templates/overlay_interfaces.j2': 'overlay interface block'
+      './templates/nve_vni_assign.j2': 'nve block'
 
   tasks:
 

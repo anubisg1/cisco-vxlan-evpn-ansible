@@ -12,20 +12,20 @@
     incremental_run: false
     
     vrf_dict:
-      '../templates/vrf_definition.j2': 'vrf block'
-      '../templates/bgp_l2vpn_ipv46_per_vrf.j2': 'bgp l2vpn ipv46 per vrf block'
-      '../templates/vrf_vlan_create.j2': 'vlan block'
-      '../templates/vrf_evi_vni_vlan_stiching.j2': 'vrf evi vni vlan stiching block'
-      '../templates/vrf_nve_vni_assign.j2': 'vrf nve vni assign block'
-      '../templates/vrf_svi_create.j2': 'vrf svi create block'
+      './templates/vrf_definition.j2': 'vrf block'
+      './templates/bgp_l2vpn_ipv46_per_vrf.j2': 'bgp l2vpn ipv46 per vrf block'
+      './templates/vrf_vlan_create.j2': 'vlan block'
+      './templates/vrf_evi_vni_vlan_stiching.j2': 'vrf evi vni vlan stiching block'
+      './templates/vrf_nve_vni_assign.j2': 'vrf nve vni assign block'
+      './templates/vrf_svi_create.j2': 'vrf svi create block'
     vlan_dict:
-      '../templates/vlan_create.j2': 'vlan block'
-      '../templates/evi_vni_vlan_stiching.j2': 'evi vni vlan stiching block'
-      '../templates/nve_vni_assign.j2': 'nve vni assign block'
+      './templates/vlan_create.j2': 'vlan block'
+      './templates/evi_vni_vlan_stiching.j2': 'evi vni vlan stiching block'
+      './templates/nve_vni_assign.j2': 'nve vni assign block'
     svi_dict:
-      '../templates/svi_create.j2': 'svi create block'
+      './templates/svi_create.j2': 'svi create block'
     overlay_intf_dict:
-      '../templates/overlay_interfaces.j2': 'overlay interfaces block'
+      './templates/overlay_interfaces.j2': 'overlay interfaces block'
 
   tasks:
           # Set db file path and load overlay_inc vars

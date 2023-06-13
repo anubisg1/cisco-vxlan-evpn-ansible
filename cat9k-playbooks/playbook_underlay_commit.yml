@@ -28,53 +28,53 @@
 
           - name: Configure hostnames
             cli_config:
-              config: "{{ lookup('template', '../templates/hostname.j2') }}"
+              config: "{{ lookup('template', './templates/hostname.j2') }}"
               diff_match: none 
             register: result
 
           - name: Enable Unicast Routing
             cli_config:
-              config: "{{ lookup('template', '../templates/global_routing.j2') }}"
+              config: "{{ lookup('template', './templates/global_routing.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure STP details
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/leafs_stp_global.j2') }}"
+              config: "{{ lookup('template', './templates/leafs_stp_global.j2') }}"
               diff_match: none
             register: result
 
           - name: Configure ip addresses
             cli_config:
-              config: "{{ lookup('template', '../templates/underlay_interfaces.j2') }}"
+              config: "{{ lookup('template', './templates/underlay_interfaces.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure OSPF
             cli_config:
-              config: "{{ lookup('template', '../templates/ospf_interfaces.j2') }}"
+              config: "{{ lookup('template', './templates/ospf_interfaces.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure BGP Process on spines
             when: inventory_hostname in groups['spine']
             cli_config:
-              config: "{{ lookup('template', '../templates/bgp_global_spines.j2') }}"
+              config: "{{ lookup('template', './templates/bgp_global_spines.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure BGP Process on Leafs
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/bgp_global_leafs.j2') }}"
+              config: "{{ lookup('template', './templates/bgp_global_leafs.j2') }}"
               diff_match: none 
             register: result
 
           - name: Configure VTEP
             when: inventory_hostname in groups['leaf']
             cli_config:
-              config: "{{ lookup('template', '../templates/l2vpn_evpn_global.j2') }}"
+              config: "{{ lookup('template', './templates/l2vpn_evpn_global.j2') }}"
               diff_match: none 
             register: result
 
