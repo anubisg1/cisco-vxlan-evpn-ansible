@@ -24,7 +24,7 @@ rd_dup_dict = {}
 
 def yaml_error_validation(parsed_yaml,debug):
     """
-    validate some error senarios in the yaml file
+    validate some error scenarios in the yaml file
     Args:
         parsed_yaml: yaml file converted to dict
         debug: for completed output 
@@ -35,13 +35,6 @@ def yaml_error_validation(parsed_yaml,debug):
     Error_senarios :
         vni duplication,evi duplication,svi_type core duplication
     """
-
-    for nve in parsed_yaml['nve_interfaces'].keys() :
-        try :
-            if len(parsed_yaml['nve_interfaces'][nve]['source_interface']) != 0 :
-                mul_list_dict['nve_lst'].append("source_interface {} is present under nve_interfaces".format(parsed_yaml['nve_interfaces'][nve]['source_interface']))
-        except TypeError as e :
-                mul_list_dict['yaml_error_validation_error_lst'].append("mandatory parameter {} not found under nve_interfaces {}".format(e,nve)) 
 
     for vlan,vlan_data in parsed_yaml['vlans'].items():
         mul_list_dict['vlan_validation_lst'].append(vlan)
@@ -127,9 +120,6 @@ def yaml_error_validation(parsed_yaml,debug):
         else :
             return ("partial validation for vlan and svi is done successfully")
     
-    
-    
-
 def vlan_svi_validation(parsed_yaml,debug) :
     """
     validate some error senarios in the yaml file
@@ -355,7 +345,6 @@ def vrf_validation(parsed_yaml,debug) :
         else :
             return ("vrf validation is done successfully")
         
-    
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
