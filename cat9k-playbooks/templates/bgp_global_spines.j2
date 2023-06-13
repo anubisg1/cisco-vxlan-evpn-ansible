@@ -7,23 +7,23 @@ This module is configuring global BGP process and neighbor parameters
 {# initial BGP process configuration #}
 !
 router bgp {{ bgp.as_number }}
-    bgp log-neighbor-changes
-    bgp router-id interface {{ underlay.router_id }}
-    no bgp default ipv4-unicast
-    bgp update-delay 1
-    bgp graceful-restart
-    !
-    neighbor LEAFS peer-group
-    neighbor LEAFS remote-as {{ bgp.as_number }}
-    neighbor LEAFS password {{ bgp.password }}
-    neighbor LEAFS update-source {{ underlay.router_id }}
-    neighbor LEAFS fall-over bfd
-    bgp listen range {{ bgp.leafs_range }} peer-group LEAFS
-    !
-    address-family l2vpn evpn
-      neighbor LEAFS activate
-      neighbor LEAFS send-community both
-      neighbor LEAFS route-reflector-client
-    exit-address-family
-    {# no address-family ipv4 #}
-    !
+  bgp log-neighbor-changes
+  bgp router-id interface {{ underlay.router_id }}
+  no bgp default ipv4-unicast
+  bgp update-delay 1
+  bgp graceful-restart
+  !
+  neighbor LEAFS peer-group
+  neighbor LEAFS remote-as {{ bgp.as_number }}
+  neighbor LEAFS password {{ bgp.password }}
+  neighbor LEAFS update-source {{ underlay.router_id }}
+  neighbor LEAFS fall-over bfd
+  bgp listen range {{ bgp.leafs_range }} peer-group LEAFS
+  !
+  address-family l2vpn evpn
+    neighbor LEAFS activate
+    neighbor LEAFS send-community both
+    neighbor LEAFS route-reflector-client
+  exit-address-family
+  {# no address-family ipv4 #}
+  !

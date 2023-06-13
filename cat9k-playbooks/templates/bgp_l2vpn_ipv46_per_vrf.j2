@@ -7,25 +7,25 @@ If action is not set in the configurations, it is "add" by default.
 
 {# Configure BGP AF for VRF #}
 {% if vrfs is defined -%}
-    !
-    router bgp {{ bgp.as_number }}
-    {% for vrf in vrfs -%}
-        {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
-            {% for af in vrfs[vrf].afs -%}
-                !
-                address-family {{ af }} vrf {{ vrf }}
-                advertise l2vpn evpn
-                redistribute connected
-                redistribute static
+  !
+  router bgp {{ bgp.as_number }}
+  {% for vrf in vrfs -%}
+    {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+      {% for af in vrfs[vrf].afs -%}
+        !
+        address-family {{ af }} vrf {{ vrf }}
+        advertise l2vpn evpn
+        redistribute connected
+        redistribute static
 
-                {# Check if something else needed to be redistributed except static or connected #}
-                {% if bgp.afs[af].vrf[vrf].redistribute is defined %}
-                    {% for redist in bgp.afs[af].vrf[vrf].redistribute %}
-                        redistribute {{redist}}
-                    {% endfor%}
-                {% endif %}
-
-            {% endfor%}
+        {# Check if something else needed to be redistributed except static or connected #}
+        {% if bgp.afs[af].vrf[vrf].redistribute is defined %}
+          {% for redist in bgp.afs[af].vrf[vrf].redistribute %}
+            redistribute {{redist}}
+          {% endfor%}
         {% endif %}
-    {% endfor %}
+        
+      {% endfor%}
+    {% endif %}
+  {% endfor %}
 {% endif %}

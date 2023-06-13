@@ -14,8 +14,10 @@ Default OSPF network type in underlay is P2P for speeding up the convergence tim
         ip ospf 1 area {{ ospf.area }}
 
         {% if type != 'loopback' %}
-          ip ospf authentication message-digest
-          ip ospf message-digest-key 1 md5 0 {{ ospf.password }}
+            {% if ospf.password is defined %}
+              ip ospf authentication message-digest
+              ip ospf message-digest-key 1 md5 0 {{ ospf.password }}
+            {% endif %}
           ip ospf network point-to-point
         {% endif %}
     {% endif %}
@@ -27,5 +29,7 @@ router ospf 1
   router-id {{ interfaces[underlay.router_id].ip_address }}
   log-adjacency-changes detail
   nsr
-  area {{ ospf.area }} authentication message-digest
+  {% if ospf.password is defined %}
+    area {{ ospf.area }} authentication message-digest
+  {% endif %}
   bfd all-interfaces
