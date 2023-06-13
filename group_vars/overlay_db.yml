@@ -17,9 +17,7 @@ vrfs:
     description: 'L3VNI-VRF-TEST2'
 
 vlans:
-# VRF PROD #
   101:
-    type: 'access'
     description: 'prod_vlan_101'
     vrf: 'test'
     svi:
@@ -27,7 +25,6 @@ vlans:
       status: 'enabled'
 
   102:
-    type: 'access'
     description: 'prod_vlan_102'
     vrf: 'test'
     svi:
@@ -35,12 +32,10 @@ vlans:
       status: 'disabled'
 
   103:
-    type: 'access'
     description: 'vmotion_vlan_103'
     vrf: 'test'
 
   104:
-    type: 'access'
     description: 'preprod_vlan_104'
     vrf: 'test2'
     svi:
@@ -48,6 +43,5 @@ vlans:
       status: 'disabled'
 
   105:
-    type: 'access'
     description: 'preprod_vlan_105'
     vrf: 'test2'

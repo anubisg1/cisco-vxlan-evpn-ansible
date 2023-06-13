@@ -86,4 +86,5 @@ More details could be found [here](https://docs.python.org/3/library/venv.html)
 ```text
     cd cat9k-playbooks
     ansible-playbook -i ../inventory playbook_xxx.yaml
+    ansible-playbook -i ../inventory -e ansible_ssh_pass=xxx playbook_xxx.yaml
 ```

@@ -35,7 +35,7 @@
         block:
           - name: Filter 'access' type VLAN/s
             when: counter is not defined
-            include_tasks: ../subtasks/subtask_get_access_vlan.yml
+            include_tasks: ../subtasks/subtask_get_vlans.yml
 
           - set_fact: 
               vlan_id_common: "{{ vlan_id_all }}"

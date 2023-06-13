@@ -14,27 +14,15 @@ If action is not set in the configurations, it is "add" by default.
                     !
                     no interface Vlan{{vlan}}
                 {% elif action == 'add' %}
-                    {% if vlans[vlan].type == 'access' %}
-                        !
-                        interface Vlan{{vlan}}
-                        vrf forwarding {{ vlans[vlan].vrf }}
-                        ip address {{vlans[vlan].svi.ipv4}}
-                    {% elif vlans[vlan].type == 'non_vxlan' %}
-                        !
-                        interface Vlan{{vlan}}
-                        vrf forwarding {{ vlans[vlan].vrf }}
-                        ip address {{vlans[vlan].svi.ipv4}}
-                    {% endif %}
-
+                    !
+                    interface Vlan{{vlan}}
+                    vrf forwarding {{ vlans[vlan].vrf }}
+                    ip address {{vlans[vlan].svi.ipv4}}
+                    mac-address {{ anycastgateway.mac }}
                     {% if vlans[vlan].svi.status  == 'enabled' %}
                         no shut
                     {% else %}
                         shut
-                    {% endif %}
-
-                    {# Check if static MAC configuration is needed on the SVI #}
-                    {% if anycastgateway.mac is defined and vlans[vlan].type == 'access' %}
-                        mac-address {{ anycastgateway.mac }}
                     {% endif %}
                 {% endif %}
             {% endif %}

@@ -41,10 +41,9 @@ Note: These subtasks cannot be executed independently.
     Saves the configs of an access interface to a varible without pushing it to the devices
 ```
 
-### 5) subtask_get_access_vlan.yml: ###
+### 5) subtask_get_vlans: ###
 ```
-    Loads group_vars/overlay_db.yml and filters the VLANs of type 'access'
-
+    Loads group_vars/overlay_db.yml and gets all the vlans except the ones binded to an L3VNI'
 ```
 
 ### Sequence Diagram: ###
@@ -58,7 +57,7 @@ Note: These subtasks cannot be executed independently.
                     |-----1--->|  subtask_acc_intf_trunk  |
                     |          |__________________________|
                     |                        |                          __________________________
-                    |                        |-------------1a*-------->| subtask_get_access_vlan  | 
+                    |                        |-------------1a*-------->| subtask_get_vlan         | 
                     |                        |<------------1b*---------|__________________________|
                     |                        |
                     |                        |                          __________________________________
