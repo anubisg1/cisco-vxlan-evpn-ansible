@@ -20,9 +20,6 @@
             precheck_yml:
               underlay_db: "{{ underlay_db }}"
               overlay_db: "{{ overlay_db }}"
-              #debug : 'verbose'( displaying complete output if validation is successful else displays the errors)
-              #debug : ' '(displays only error senarios if found any)
-              debug : ''
             register: result
             
           - name: Print result

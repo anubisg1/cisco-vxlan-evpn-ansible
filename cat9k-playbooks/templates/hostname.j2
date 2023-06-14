@@ -11,6 +11,6 @@ no cdp run
 {% if hostname is defined %}
     hostname {{ hostname }}
 {% endif %}
-{% if domain.name is defined %}
-    ip domain name {{ domain.name }}
+{% if domain_name is defined %}
+    ip domain name {{ domain_name }}
 {% endif %}

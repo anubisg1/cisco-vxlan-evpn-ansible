@@ -1,5 +1,4 @@
-anycastgateway:
-  mac: '0000.2222.3333'
+anycastgateway_mac: '0000.2222.3333'
 
 vrfs:
   test:

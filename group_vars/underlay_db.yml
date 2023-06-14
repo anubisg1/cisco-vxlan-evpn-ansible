@@ -1,8 +1,7 @@
 stp:
   priority: '0'
 
-domain:
-  name: 'mylab.lab'
+domain_name: 'mylab.lab'
 
 underlay:
   router_id: 'Loopback0'

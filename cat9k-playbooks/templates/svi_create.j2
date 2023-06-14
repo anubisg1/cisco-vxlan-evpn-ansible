@@ -18,7 +18,7 @@ If action is not set in the configurations, it is "add" by default.
                     interface Vlan{{vlan}}
                     vrf forwarding {{ vlans[vlan].vrf }}
                     ip address {{vlans[vlan].svi.ipv4}}
-                    mac-address {{ anycastgateway.mac }}
+                    mac-address {{ anycastgateway_mac }}
                     {% if vlans[vlan].svi.status  == 'enabled' %}
                         no shut
                     {% else %}
