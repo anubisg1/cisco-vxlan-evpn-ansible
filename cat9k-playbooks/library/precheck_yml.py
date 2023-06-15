@@ -120,9 +120,9 @@ def yaml_overlay_validation(parsed_overlay) :
         else :
             for afs in parsed_overlay['vrfs'][vrf]['afs'] :
                 if afs == "ipv6" :
-                    raise KeyError (f"Address Family IPv6 is not yet supported. vrf: {(vrf)}")
+                    raise ValueError (f"Address Family IPv6 is not yet supported. vrf: {(vrf)}")
                 elif afs != "ipv4" :
-                    raise KeyError (f"Please configure a valid Address Family for vrf: {(vrf)}")
+                    raise ValueError (f"Please configure a valid Address Family for vrf: {(vrf)}")
         if "id" not in parsed_overlay['vrfs'][vrf] :
             raise KeyError ("Mandatory id section is missig in the overlay_db")
         else : 
@@ -132,11 +132,28 @@ def yaml_overlay_validation(parsed_overlay) :
             raise KeyError (f"Mandatory vlan section is missig for vrf: {(vrf)}")
         else :
             if not ( (2 <= int(parsed_overlay['vrfs'][vrf]['vlan']) <= 1001) or (1006 <= int(parsed_overlay['vrfs'][vrf]['vlan']) <= 4094) ) :
-                raise KeyError (f"Vlan section for vrf: {(vrf)} is out of range.\n Valid valies are 2-1001 and 1006-4094")
+                raise ValueError (f"Vlan section for vrf: {(vrf)} is out of range.\n Valid valies are 2-1001 and 1006-4094")
 
     # Check the Vlans section and all of it's mandatory components
     if "vlans" not in parsed_overlay:
         raise KeyError ("Mandatory vlans section is missig in the overlay_db")
+    for vlan in parsed_overlay['vlans'].keys() :
+        if not ( (2 <= int(vlan) <= 1001) or (1006 <= int(vlan) <= 4094) ) :
+            raise ValueError (f"Vlan number {(vlan)} is out of range.\n Valid valies are 2-1001 and 1006-4094") 
+        for vrf in parsed_overlay['vrfs'].keys() :
+            if int(vlan) == int(parsed_overlay['vrfs'][vrf]['vlan']) :
+                raise ValueError (f"Vlan number {(vlan)} has already been used as a L3VNI vlan for vrf {(vrf)}") 
+        if "vrf" not in parsed_overlay['vlans'][vlan] :
+            raise KeyError (f"Mandatory vrf section is missig for vlan: {(vlan)}")
+        # TODO check if vrf defined exists in the vrf section #
+        if "svi" in parsed_overlay['vlans'][vlan] :
+            if "ipv4" not in parsed_overlay['vlans'][vlan]['svi'] :
+                raise KeyError (f"Mandatory ipv4 section is missig for the svi in vlan: {(vlan)}")
+            # TODO check if ipv4 is a valid ip + mask#
+            if "status" not in parsed_overlay['vlans'][vlan]['svi'] :
+                raise KeyError (f"Mandatory status section is missig for the svi in vlan: {(vlan)}")
+            elif not ((parsed_overlay['vlans'][vlan]['svi']['status'] == "enabled") or (parsed_overlay['vlans'][vlan]['svi']['status'] == "disabled")) :
+                raise KeyError (f"Wrong status the svi in vlan: {(vlan)}. Valid values are 'enabled' or 'disabled'")
 
     return ("Overlay YAML Validation done successfully")
     
