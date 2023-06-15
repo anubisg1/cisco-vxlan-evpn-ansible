@@ -1,5 +1,3 @@
-#Validate overlay_db.yml for any errors
-
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 from ansible.module_utils.basic import AnsibleModule
@@ -13,13 +11,12 @@ import collections
 mul_list_dict = collections.defaultdict(list)
 
 def yaml_underlay_validation(parsed_underlay) :
-
     """
     validate some error scenarios in the yaml file
     Args:
         parsed_underlay: underlay yaml file converted to dict
     Returns:
-        string : "partial validation for vlan and svi is done successfully"
+        string : "Underlay YAML Validation done successfully"
     Raises:
         KeyError if key not founds
         ValueError if values are not of the correct type
@@ -104,13 +101,27 @@ def yaml_underlay_validation(parsed_underlay) :
 def yaml_overlay_validation(parsed_overlay) :
     # check if all mandatory sections are present in the underlay
     if "anycastgateway_mac" not in parsed_overlay:
-        raise KeyError ("Mandatory anycastgateway_mac section is missig in the underlay_db")
+        raise KeyError ("Mandatory anycastgateway_mac section is missig in the overlay_db")
         
     if "vrfs" not in parsed_overlay:
-        raise KeyError ("Mandatory vrfs section is missig in the underlay_db")
+        raise KeyError ("Mandatory vrfs section is missig in the overlay_db")
+    for vrf in parsed_overlay['vrfs'].keys() :
+        if "afs" not in parsed_overlay['vrfs'][vrf] :
+            raise KeyError ("Mandatory vrfs section is missig in the overlay_db")
+        else :
+            for afs in parsed_overlay['vrfs'][vrf]['afs'] :
+                if afs == "ipv6" :
+                    raise KeyError (f"Address Family IPv6 is not yet supported. vrf: {(vrf)}")
+                elif afs != "ipv4" :
+                    raise KeyError (f"Please configure a valid Address Family for vrf: {(vrf)}")
+        if "id" not in parsed_overlay['vrfs'][vrf] :
+            raise KeyError ("Mandatory id section is missig in the overlay_db")
+        else : 
+            if not (100 <= int(parsed_overlay['vrfs'][vrf]['id']) <= 999):
+                raise ValueError (f"Invalid VRF ID for vrf: {(vrf)}. Valid values are between 100 and 999 included")   
 
     if "vlans" not in parsed_overlay:
-        raise KeyError ("Mandatory vlans section is missig in the underlay_db")
+        raise KeyError ("Mandatory vlans section is missig in the overlay_db")
 
     return ("partial validation for underlay and overlay is done successfully")
     
