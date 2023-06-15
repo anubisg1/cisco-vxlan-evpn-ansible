@@ -18,7 +18,7 @@ def yaml_underlay_validation(parsed_underlay) :
     Returns:
         string : "Underlay YAML Validation done successfully"
     Raises:
-        KeyError if key not founds
+        KeyError if key is not found
         ValueError if values are not of the correct type
     """
 
@@ -35,7 +35,6 @@ def yaml_underlay_validation(parsed_underlay) :
     # Validate that the domain_name exists and has the correct values
     if "domain_name" not in parsed_underlay :
         raise KeyError ("Mandatory domain_name section is missig in the underlay_db")
-
 
     # Validate that the Underlay section exists and has the correct values
     if "underlay" not in parsed_underlay:
@@ -79,8 +78,6 @@ def yaml_underlay_validation(parsed_underlay) :
             ipaddress.IPv4Network(parsed_underlay['bgp']['leafs_range'])
         except :
             raise ValueError ("BGP Leaf Range must be a valid IPv4 Network")
-        
-
     if "spines" not in parsed_underlay['bgp']:
         raise KeyError ("Mandatory bgp.spines section is missig in the underlay_db")
     else :
@@ -99,10 +96,22 @@ def yaml_underlay_validation(parsed_underlay) :
     return ("Underlay YAML Validation done successfully")
 
 def yaml_overlay_validation(parsed_overlay) :
-    # check if all mandatory sections are present in the underlay
+    """
+    validate some error scenarios in the yaml file
+    Args:
+        parsed_overlay: overlay yaml file converted to dict
+    Returns:
+        string : "Overlay YAML Validation done successfully"
+    Raises:
+        KeyError if key is not found
+        ValueError if values are not of the correct type
+    """
+
+    # Check if all mandatory sections are present in the underlay
     if "anycastgateway_mac" not in parsed_overlay:
         raise KeyError ("Mandatory anycastgateway_mac section is missig in the overlay_db")
-        
+
+    # Check the VRFs section and all of it's mandatory components
     if "vrfs" not in parsed_overlay:
         raise KeyError ("Mandatory vrfs section is missig in the overlay_db")
     for vrf in parsed_overlay['vrfs'].keys() :
@@ -119,11 +128,17 @@ def yaml_overlay_validation(parsed_overlay) :
         else : 
             if not (100 <= int(parsed_overlay['vrfs'][vrf]['id']) <= 999):
                 raise ValueError (f"Invalid VRF ID for vrf: {(vrf)}. Valid values are between 100 and 999 included")   
+        if "vlan" not in parsed_overlay['vrfs'][vrf] :
+            raise KeyError (f"Mandatory vlan section is missig for vrf: {(vrf)}")
+        else :
+            if not ( (2 <= int(parsed_overlay['vrfs'][vrf]['vlan']) <= 1001) or (1006 <= int(parsed_overlay['vrfs'][vrf]['vlan']) <= 4094) ) :
+                raise KeyError (f"Vlan section for vrf: {(vrf)} is out of range.\n Valid valies are 2-1001 and 1006-4094")
 
+    # Check the Vlans section and all of it's mandatory components
     if "vlans" not in parsed_overlay:
         raise KeyError ("Mandatory vlans section is missig in the overlay_db")
 
-    return ("partial validation for underlay and overlay is done successfully")
+    return ("Overlay YAML Validation done successfully")
     
 def vlan_svi_validation(parsed_overlay) :
     return ("partial validation for vlan and svi is done successfully")

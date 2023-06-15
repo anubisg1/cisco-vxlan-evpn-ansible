@@ -6,21 +6,23 @@ If action is not set in the configurations, it is "add" by default.
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 
 {% if vrfs is defined %}
-    {% for vrf in vrfs %}
-        {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
-            {% set action = vrfs[vrf].action | default ('add') %}
-            {% if action == 'delete' %}
-                !
-                no interface Vlan{{ vrfs[vrf].vlan }}
-            {% elif action == 'add' %}
-                !
-                interface Vlan{{ vrfs[vrf].vlan }}
-                description {{ vrfs[vrf].description }}
-                vrf forwarding {{vrf}}
-                ip unnumbered Loopback0
-                no autostate
-                no shut
-            {% endif %}
+  {% for vrf in vrfs %}
+    {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+      {% set action = vrfs[vrf].action | default ('add') %}
+      {% if action == 'delete' %}
+        !
+        no interface Vlan{{ vrfs[vrf].vlan }}
+      {% elif action == 'add' %}
+        !
+        interface Vlan{{ vrfs[vrf].vlan }}
+        {% if vrfs[vrf].description is defined %}
+          description {{ vrfs[vrf].description }}
         {% endif %}
-    {% endfor %}
+        vrf forwarding {{vrf}}
+        ip unnumbered Loopback0
+        no autostate
+        no shut
+      {% endif %}
+    {% endif %}
+  {% endfor %}
 {% endif %}

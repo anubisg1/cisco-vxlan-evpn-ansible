@@ -9,46 +9,46 @@ Note: after deleting vrf, respective subsection for vrf under bgp will be delete
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 
 {% if vrfs is defined %}
-    {% for vrf in vrfs %}
-        {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
-            {% set l3vni = vrfs[vrf].id ~ "0000" %}
-            {# Checking an action for all vrf #}
-            {% set action = vrfs[vrf].action | default ('add') %}
-            {% if action == 'delete' %}
-                !
-                no vrf definition {{vrf}}
-            {% elif action == 'add' %}
-                {# Configuring basic vrf definition #}
-                !
-                vrf definition {{ vrf }}
-                {% if vrfs[vrf].description is defined %}
-                    description {{ vrfs[vrf].description }}
-                {% endif %}
-                rd {{ interfaces.Loopback0.ip_address}}:{{ 4 ~ vrfs[vrf].id }}
-                {% for af in vrfs[vrf].afs %}
-                    {# Checking an action for the AF #}
-                    {% set action = vrfs[vrf].afs[af].action | default ('add') %}
-                    {% if action == 'delete' %}
-                        no address-family {{ af }}
-                    {% elif action == 'add' %}
-                        !
-                        address-family {{ af }}
-                        {# RT section #}
-                        {% set action = vrfs[vrf].afs[af].rt_import.action | default ('add') %}
-                        {% if action == 'delete' %}
-                            no route-target import {{ bgp.as_number }}:{{ l3vni }}
-                            no route-target import {{ bgp.as_number }}:{{ l3vni }} stitching
-                            no route-target export {{ bgp.as_number }}:{{ l3vni }}
-                            no route-target export {{ bgp.as_number }}:{{ l3vni }} stitching
-                        {% elif action == 'add' %}
-                            route-target import {{ bgp.as_number }}:{{ l3vni }}
-                            route-target import {{ bgp.as_number }}:{{ l3vni }} stitching
-                            route-target export {{ bgp.as_number }}:{{ l3vni }}
-                            route-target export {{ bgp.as_number }}:{{ l3vni }} stitching
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}                        
-            {% endif %}
+  {% for vrf in vrfs %}
+    {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+      {% set l3vni = vrfs[vrf].id ~ "0000" %}
+      {# Checking an action for all vrf #}
+      {% set action = vrfs[vrf].action | default ('add') %}
+      {% if action == 'delete' %}
+        !
+        no vrf definition {{vrf}}
+      {% elif action == 'add' %}
+        {# Configuring basic vrf definition #}
+        !
+        vrf definition {{ vrf }}
+        {% if vrfs[vrf].description is defined %}
+          description {{ vrfs[vrf].description }}
         {% endif %}
-    {% endfor %}      
+        rd {{ interfaces.Loopback0.ip_address}}:{{ 4 ~ vrfs[vrf].id }}
+        {% for af in vrfs[vrf].afs %}
+          {# Checking an action for the AF #}
+          {% set action = vrfs[vrf].afs[af].action | default ('add') %}
+          {% if action == 'delete' %}
+            no address-family {{ af }}
+          {% elif action == 'add' %}
+            !
+            address-family {{ af }}
+            {# RT section #}
+            {% set action = vrfs[vrf].afs[af].rt_import.action | default ('add') %}
+            {% if action == 'delete' %}
+              no route-target import {{ bgp.as_number }}:{{ l3vni }}
+              no route-target import {{ bgp.as_number }}:{{ l3vni }} stitching
+              no route-target export {{ bgp.as_number }}:{{ l3vni }}
+              no route-target export {{ bgp.as_number }}:{{ l3vni }} stitching
+            {% elif action == 'add' %}
+              route-target import {{ bgp.as_number }}:{{ l3vni }}
+              route-target import {{ bgp.as_number }}:{{ l3vni }} stitching
+              route-target export {{ bgp.as_number }}:{{ l3vni }}
+              route-target export {{ bgp.as_number }}:{{ l3vni }} stitching
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
 {% endif %}
