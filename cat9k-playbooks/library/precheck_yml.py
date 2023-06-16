@@ -143,8 +143,7 @@ def yaml_overlay_validation(parsed_overlay) :
         if "vrf" not in parsed_overlay['vlans'][vlan] :
             raise KeyError (f"Mandatory vrf section is missig for vlan: {(vlan)}")
         elif not parsed_overlay['vlans'][vlan]['vrf'] in parsed_overlay['vrfs'] :
-            raise ValueError (f"Vrf configured for {(vlan)} does not exist in the VRF section") 
-        # TODO check if vrf defined exists in the vrf section #
+            raise ValueError (f"Vrf configured for vlan {(vlan)} does not exist in the VRF section") 
         if "svi" in parsed_overlay['vlans'][vlan] :
             if "ipv4" not in parsed_overlay['vlans'][vlan]['svi'] :
                 raise KeyError (f"Mandatory ipv4 section is missig for the svi in vlan: {(vlan)}")
@@ -158,13 +157,6 @@ def yaml_overlay_validation(parsed_overlay) :
                 raise KeyError (f"Wrong status the svi in vlan: {(vlan)}. Valid values are 'enabled' or 'disabled'")
 
     return ("Overlay YAML Validation done successfully")
-    
-def vlan_svi_validation(parsed_overlay) :
-    return ("partial validation for vlan and svi is done successfully")
-    
-def vrf_validation(parsed_overlay) :
-    return ("partial validation for VRFs is done successfully")
-
         
 def run_module():
     module = AnsibleModule(
@@ -177,12 +169,9 @@ def run_module():
 
     result = {}
 
-    #result['precheck'] = parsed_yaml
     result['yaml_precheck']= ( 
         yaml_underlay_validation(module.params['underlay_db']),
-        yaml_overlay_validation(module.params['overlay_db']),
-        vlan_svi_validation(module.params['overlay_db']),
-        vrf_validation(module.params['overlay_db']),
+        yaml_overlay_validation(module.params['overlay_db'])
     )    
     module.exit_json(**result)
 
