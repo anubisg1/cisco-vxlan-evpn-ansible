@@ -2,10 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 from ansible.module_utils.basic import AnsibleModule
 
-import re
-import yaml, json
 import ipaddress
-from netaddr import IPAddress
 import collections
 
 mul_list_dict = collections.defaultdict(list)
@@ -149,7 +146,10 @@ def yaml_overlay_validation(parsed_overlay) :
         if "svi" in parsed_overlay['vlans'][vlan] :
             if "ipv4" not in parsed_overlay['vlans'][vlan]['svi'] :
                 raise KeyError (f"Mandatory ipv4 section is missig for the svi in vlan: {(vlan)}")
-            # TODO check if ipv4 is a valid ip + mask#
+            else :
+                ip = ('/'.join(parsed_overlay['vlans'][vlan]['svi']['ipv4'].split(" ")))
+                if ip != ipaddress.IPv4Interface(ip).with_netmask :
+                    raise ValueError (f"IP address for {(vlan)} is invalid. Please specificy a valid ip and subnet mask") 
             if "status" not in parsed_overlay['vlans'][vlan]['svi'] :
                 raise KeyError (f"Mandatory status section is missig for the svi in vlan: {(vlan)}")
             elif not ((parsed_overlay['vlans'][vlan]['svi']['status'] == "enabled") or (parsed_overlay['vlans'][vlan]['svi']['status'] == "disabled")) :
