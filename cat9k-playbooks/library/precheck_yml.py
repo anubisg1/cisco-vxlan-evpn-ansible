@@ -142,6 +142,8 @@ def yaml_overlay_validation(parsed_overlay) :
                 raise ValueError (f"Vlan number {(vlan)} has already been used as a L3VNI vlan for vrf {(vrf)}") 
         if "vrf" not in parsed_overlay['vlans'][vlan] :
             raise KeyError (f"Mandatory vrf section is missig for vlan: {(vlan)}")
+        elif not parsed_overlay['vlans'][vlan]['vrf'] in parsed_overlay['vrfs'] :
+            raise ValueError (f"Vrf configured for {(vlan)} does not exist in the VRF section") 
         # TODO check if vrf defined exists in the vrf section #
         if "svi" in parsed_overlay['vlans'][vlan] :
             if "ipv4" not in parsed_overlay['vlans'][vlan]['svi'] :
