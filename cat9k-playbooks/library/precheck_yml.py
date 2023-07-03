@@ -144,6 +144,25 @@ def yaml_overlay_validation(parsed_overlay) :
             raise KeyError (f"Mandatory vrf section is missig for vlan: {(vlan)}")
         elif not parsed_overlay['vlans'][vlan]['vrf'] in parsed_overlay['vrfs'] :
             raise ValueError (f"Vrf configured for vlan {(vlan)} does not exist in the VRF section") 
+        if "type" in parsed_overlay['vlans'][vlan] :
+            if not ((parsed_overlay['vlans'][vlan]['type'] == "normal") or
+                    (parsed_overlay['vlans'][vlan]['type'] == "primary") or
+                    (parsed_overlay['vlans'][vlan]['type'] == "community") or
+                    (parsed_overlay['vlans'][vlan]['type'] == "isolated")) :
+                raise ValueError (f"Private Vlan Type configured for vlan {(vlan)} is invalid")
+            if ((parsed_overlay['vlans'][vlan]['type'] == "community") or (parsed_overlay['vlans'][vlan]['type'] == "isolated")) :
+                if "primary" not in parsed_overlay['vlans'][vlan] :
+                    raise KeyError (f"Mandatory primary vlan association is missig for vlan: {(vlan)}")
+                else :
+                    primary = parsed_overlay['vlans'][vlan]['primary']
+                    if primary not in parsed_overlay['vlans'].keys() :
+                        raise ValueError (f"Primary vlan {(primary)} configured for vlan {(vlan)} does not exist")
+                    else :
+                        if "type" not in parsed_overlay['vlans'][primary] :
+                            raise KeyError (f"Private Vlan Type is missig for vlan: {(primary)} referenced by vlan {(vlan)} ")
+                        elif not ( parsed_overlay['vlans'][primary]['type'] == "primary" ):
+                            raise ValueError (f"Vlan {parsed_overlay['vlans'][vlan]['primary']} is not configured as a private pvlan")
+            
         if "svi" in parsed_overlay['vlans'][vlan] :
             if "ipv4" not in parsed_overlay['vlans'][vlan]['svi'] :
                 raise KeyError (f"Mandatory ipv4 section is missig for the svi in vlan: {(vlan)}")

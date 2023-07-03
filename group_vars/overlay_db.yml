@@ -44,3 +44,26 @@ vlans:
   105:
     description: 'preprod_vlan_105'
     vrf: 'test2'
+
+  300:
+    description: 'primary_pvlan_test'
+    vrf: 'test'
+    type: 'primary'
+
+  301:
+    description: 'primary_pvlan_test'
+    vrf: 'test'
+    type: 'isolated'
+    primary: '300'
+
+  302:
+    description: 'primary_pvlan_test'
+    vrf: 'test'
+    type: 'community'
+    primary: '300'
+
+  303:
+    description: 'primary_pvlan_test'
+    vrf: 'test'
+    type: 'community'
+    primary: '300'
