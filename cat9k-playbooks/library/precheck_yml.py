@@ -143,7 +143,9 @@ def yaml_overlay_validation(parsed_overlay) :
         if "vrf" not in parsed_overlay['vlans'][vlan] :
             raise KeyError (f"Mandatory vrf section is missig for vlan: {(vlan)}")
         elif not parsed_overlay['vlans'][vlan]['vrf'] in parsed_overlay['vrfs'] :
-            raise ValueError (f"Vrf configured for vlan {(vlan)} does not exist in the VRF section") 
+            raise ValueError (f"Vrf configured for vlan {(vlan)} does not exist in the VRF section")
+        # need to check also if only 1 isolated is mapped to a primary #
+        # A primary can be mapped to multiple community vlans but only one isolated #
         if "type" in parsed_overlay['vlans'][vlan] :
             if not ((parsed_overlay['vlans'][vlan]['type'] == "normal") or
                     (parsed_overlay['vlans'][vlan]['type'] == "primary") or
