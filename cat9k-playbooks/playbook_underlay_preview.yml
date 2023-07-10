@@ -18,54 +18,60 @@
       './templates/bgp_global_spines.j2': 'bgp spine block'
 
   tasks:
-          # Set db file path and load underlay vars
-          - name: Load and process underlay input file
-            run_once: true
-            block:
-            - name: set underlay vars input file path if not already set
-              when: input_vars_path is not defined
-              set_fact: 
-                input_vars_path: "../"
+    # Set db file path and load underlay vars
+    - name: Load and process underlay input file # noqa: run-once[task]
+      run_once: true
+      block:
+        - name: Set underlay vars input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
 
-          - name: Load vars from node_vars/<host>.yml input file
-            include_vars: 
-              file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
+    - name: Load vars from node_vars/<host>.yml input file
+      ansible.builtin.include_vars:
+        file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
 
-          - name: Load vars from underlay input file
-            include_vars: 
-              file: "{{ input_vars_path }}group_vars/underlay_db.yml"
+    - name: Load vars from underlay input file
+      ansible.builtin.include_vars:
+        file: "{{ input_vars_path }}group_vars/underlay_db.yml"
 
-          - name: Read global underlay template files
-            set_fact:
-              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_global[item.key] }} {{ lookup('template', item.key ) }}"
-            with_dict: "{{ underlay_dict_global }}"
+    - name: Read global underlay template files
+      ansible.builtin.set_fact:
+        underlay_block: "{{ underlay_block }} ! {{ underlay_dict_global[item.key] }} {{ lookup('template', item.key) }}"
+      with_dict: "{{ underlay_dict_global }}"
 
-          - name: Read Leafs underlay template files
-            when: inventory_hostname in groups['leaf']
-            set_fact:
-              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_leaf[item.key] }} {{ lookup('template', item.key ) }}"
-            with_dict: "{{ underlay_dict_leaf }}"
+    - name: Read Leafs underlay template files
+      when: inventory_hostname in groups['leaf']
+      ansible.builtin.set_fact:
+        underlay_block: "{{ underlay_block }} ! {{ underlay_dict_leaf[item.key] }} {{ lookup('template', item.key) }}"
+      with_dict: "{{ underlay_dict_leaf }}"
 
-          - name: Read Spines underlay template files
-            when: inventory_hostname in groups['spine'] 
-            set_fact:
-              underlay_block: "{{ underlay_block }} ! {{ underlay_dict_spine[item.key] }} {{ lookup('template', item.key ) }}"
-            with_dict: "{{ underlay_dict_spine }}"
+    - name: Read Spines underlay template files
+      when: inventory_hostname in groups['spine']
+      ansible.builtin.set_fact:
+        underlay_block: "{{ underlay_block }} ! {{ underlay_dict_spine[item.key] }} {{ lookup('template', item.key) }}"
+      with_dict: "{{ underlay_dict_spine }}"
 
-          - name: Render template files output
-            set_fact:
-              rendered: "{{ underlay_block | regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') | regex_replace('\\n(\\s+)','\n') | regex_replace('! ','\n\n! ') }}"
+    - name: Render template files output
+      ansible.builtin.set_fact:
+        rendered: >-
+          "{{ underlay_block |
+            regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') |
+            regex_replace('\\n(\\s+)','\n') |
+            regex_replace('! ','\n\n! ') }}"
 
-          - name: Copy configurations to the respective file ( <hostname>-underlay.txt ) under 'preview_files' folder
-            copy:
-              dest: preview_files/{{inventory_hostname}}-underlay.txt
-              content: "{{ rendered }}"
+    - name: Copy configurations to the respective file ( <hostname>-underlay.txt ) under 'preview_files' folder
+      ansible.builtin.copy:
+        mode: preserve
+        dest: preview_files/{{ inventory_hostname }}-underlay.txt
+        content: "{{ rendered }}"
 
 - name: Display output file info
   hosts: localhost
   gather_facts: false
-  run_once: True
+  run_once: true # noqa: run-once[play]
 
   tasks:
-    - debug:
+    - name: Final Output
+      ansible.builtin.debug:
         msg: Please refer to <hostname>-underlay.txt in 'preview_files' folder
