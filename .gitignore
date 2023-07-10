@@ -3,3 +3,4 @@ playbooks-to-migrate/
 old-templates/
 backups/
 devices-inventory.yml
+settings.json
