@@ -54,11 +54,7 @@
 
     - name: Render template files output
       ansible.builtin.set_fact:
-        rendered: >-
-          "{{ underlay_block |
-            regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') |
-            regex_replace('\\n(\\s+)','\n') |
-            regex_replace('! ','\n\n! ') }}"
+        rendered: "{{ underlay_block | regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') | regex_replace('\\n(\\s+)','\n') | regex_replace('! ','\n\n! ') }}"
 
     - name: Copy configurations to the respective file ( <hostname>-underlay.txt ) under 'preview_files' folder
       ansible.builtin.copy:

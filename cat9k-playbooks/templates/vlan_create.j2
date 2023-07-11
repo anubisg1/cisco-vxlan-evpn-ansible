@@ -10,7 +10,9 @@ If action is not set in the configurations, it is "add" by default.
     {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
       {# Checking an action for the vlan - action_vlan. #}
       {% set action = vlans[vlan].action | default ('add') %}
-      {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+      {% if vlans[vlan].pvlan is defined %}
+        {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+      {% endif %}
       {% if action == 'delete' %}
         !
         no vlan {{vlan}}
@@ -21,12 +23,14 @@ If action is not set in the configurations, it is "add" by default.
         {% if vlans[vlan].description is defined %}
           name {{ vlans[vlan].description }}
         {% endif %}
-        {% if type == 'primary' %}
-          private-vlan primary
-        {% elif type == 'isolated' %}
-          private-vlan isolated
-        {% elif type == 'community' %}
-          private-vlan community
+        {% if vlans[vlan].pvlan is defined %}
+          {% if type == 'primary' %}
+            private-vlan primary
+          {% elif type == 'isolated' %}
+            private-vlan isolated
+          {% elif type == 'community' %}
+            private-vlan community
+          {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}
@@ -36,11 +40,13 @@ If action is not set in the configurations, it is "add" by default.
   {% for vlan in vlans %}
     {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
       {% set action = vlans[vlan].action | default ('add') %}
-      {% set type = vlans[vlan].pvlan.type | default ('normal') %}
-      {% if action == 'add' %}
-        {% if type == 'isolated' or type == 'community' %}
-          vlan {{ vlans[vlan].pvlan.primary }}
-            private-vlan association add {{ vlan }} 
+      {% if vlans[vlan].pvlan is defined %}
+        {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+        {% if action == 'add' %}
+          {% if type == 'isolated' or type == 'community' %}
+            vlan {{ vlans[vlan].pvlan.primary }}
+              private-vlan association add {{ vlan }} 
+          {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}

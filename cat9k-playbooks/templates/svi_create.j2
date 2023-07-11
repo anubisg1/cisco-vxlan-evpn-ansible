@@ -6,26 +6,46 @@ If action is not set in the configurations, it is "add" by default.
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 
 {% if vlans is defined %}
-    {% for vlan in vlans %}
-        {% if vlans[vlan].svi is defined %}
-            {% if ( (svi_cli is defined and vlan in svi_cli) or (svi_cli is not defined) ) %}
-                {% set action = vlans[vlan].svi.action | default ('add') %}
-                {% if action == 'delete' %}
-                    !
-                    no interface Vlan{{vlan}}
-                {% elif action == 'add' %}
-                    !
-                    interface Vlan{{vlan}}
-                    vrf forwarding {{ vlans[vlan].vrf }}
-                    ip address {{vlans[vlan].svi.ipv4}}
-                    mac-address {{ anycastgateway_mac }}
-                    {% if vlans[vlan].svi.status  == 'enabled' %}
-                        no shut
-                    {% else %}
-                        shut
-                    {% endif %}
-                {% endif %}
-            {% endif %}
+  {% for vlan in vlans %}
+    {% if vlans[vlan].svi is defined %}
+      {% if ( (svi_cli is defined and vlan in svi_cli) or (svi_cli is not defined) ) %}
+        {% set action = vlans[vlan].svi.action | default ('add') %}
+        {% if action == 'delete' %}
+          !
+          no interface Vlan{{vlan}}
+        {% elif action == 'add' %}
+          !
+          interface Vlan{{vlan}}
+          vrf forwarding {{ vlans[vlan].vrf }}
+          ip address {{vlans[vlan].svi.ipv4}}
+          mac-address {{ anycastgateway_mac }}
+          {% if vlans[vlan].svi.status  == 'enabled' %}
+            no shut
+          {% else %}
+            shut
+          {% endif %}
         {% endif %}
-    {% endfor %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {# vlans must exist and of the correct type before associating them #}
+  {% for vlan in vlans %}
+    {% if vlans[vlan].pvlan is defined %}
+      {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+      {% if type == 'isolated' or type == 'community' %}
+        {% set primary_vlan = vlans[vlan].pvlan.primary | int %}
+         {% if vlans[primary_vlan].svi is defined %}
+          {% if ( (svi_cli is defined and vlan in svi_cli) or (svi_cli is not defined) ) %}
+            {% set action = vlans[vlan].svi.action | default ('add') %}
+            {% if action == 'add' %}
+              !
+              interface Vlan{{ primary_vlan }}
+                private-vlan mapping add {{ vlan }}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}      
+    {% endif %}
+  {% endfor %}
 {% endif %}
