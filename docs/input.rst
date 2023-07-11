@@ -361,7 +361,6 @@ In this section, the configurations of the interfaces are defined.
 .. code-block:: yaml
 
     interfaces:
-
       Loopback0:
         name: 'ROUTER-ID'
         ip_address: '192.168.210.11'
@@ -408,4 +407,39 @@ In this section, the configurations of the interfaces are defined.
 
     **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
     =============================================== ==========================================================================
-    
+
+Overlay Interfaces section
+--------------------------
+
+In this section, the configurations of the overlay interfaces are defined.
+
+.. code-block:: yaml
+
+    overlay_interfaces:
+      Loopback100:
+        description: 'UNIQUE-LOOPBACK-VRF-TEST'
+        ip_address: '10.1.10.11'
+        subnet_mask: '255.255.255.255'
+        loopback: 'yes'
+        vrf: 'test'
+
+    <...snip...>
+
+
+.. table::
+    :widths: auto
+
+    =============================================== ==========================================================================
+    **Parameter**                                                            **Comments**
+    =============================================== ==========================================================================
+    **overlay_interfaces** / :red:`mandatory`       This option defines the overlay_interfaces section.
+
+    **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
+                                                    ``GigabitEthernet1/0/1``
+
+    **name** / :orange:`optional`                   This option defines the interface description.
+
+    **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
+
+    **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
+    =============================================== ==========================================================================
