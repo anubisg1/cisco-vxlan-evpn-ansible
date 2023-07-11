@@ -159,7 +159,8 @@ This section defines vrf parameters. Lets review parameters for unicast first.
         id: '100'  
         vlan: '4000'
         description: 'L3VNI-VRF-TEST'
-    <...skip...>
+
+    <...snip...>
 
 =============================================== ========================================================================== 
 **Parameter**                                                            **Comments**
@@ -189,7 +190,7 @@ This section defines vrf parameters. Lets review parameters for unicast first.
                                                 
                                                 This option defines the vlan used for L3VNI/Transit Vlan in each VRF
 
-   **description** / :orange:`optional`         This option defines the description used by both VRF and Transtit Vlan
+**description** / :orange:`optional`            This option defines the description used by both VRF and Transtit Vlan
 =============================================== ==========================================================================
 
 VLANs section
@@ -271,7 +272,22 @@ This section defines the VLANs and their stitching with EVIs (EVPN instance) and
                                                     * enabled
 
                                                     * disabled
-                                                    
+
+   **pvlan** / :orange:`optional`                    This option defines if the vlan is a private vlan
+
+   **type** / :red:`mandatory`                      | This option defines what private vlan type the vlan is.
+
+                                                    **Choices:**
+
+                                                    * primary
+
+                                                    * isolated
+
+                                                    * community
+
+   **primary** / :red:`mandatory`                   The primary vlan associated to the secondary vlan.
+
+                                                    This field applies only if the type is **isolated** or **community**
    ================================================ ==========================================================================
           
 host_vars
@@ -307,28 +323,6 @@ This section defines the hostname of a node.
     **hostname** / :orange:`optional`               This option defines the remote device's hostname.
     =============================================== ==========================================================================
 
-Global routing section
-----------------------
-
-In this section, IPv4/IPv6 related parameters for global routing table are defined.
-
-
-.. table::
-    :widths: auto
-
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **routing** / :red:`mandatory`                  This option defines the global routing section.
-
-    **ipv4_uni** / :red:`mandatory`                 This option enables the global IPv4 unicast routing on the device.
-
-    **ipv6_uni** / :red:`mandatory`                 This option enables the global IPv6 unicast routing on the device.
-
-    **ipv6_multi** / :red:`mandatory`               This option enables the global IPv4 multicast routing on the device.
-
-    =============================================== ==========================================================================
-
 Interface section
 -----------------
 
@@ -339,32 +333,30 @@ In this section, the configurations of the interfaces are defined.
     interfaces:
 
       Loopback0:
-        name: 'Routing Loopback'
-        ip_address: '172.16.255.3'
+        name: 'ROUTER-ID'
+        ip_address: '192.168.210.11'
         subnet_mask: '255.255.255.255'
-        loopback: 'yes'
-        pim_enable: 'no'
+        type: 'loopback'
 
       Loopback1:
-        name: 'NVE Loopback'
-        ip_address: '172.16.254.3'
+        name: 'VTEP'
+        ip_address: '192.168.211.11'
         subnet_mask: '255.255.255.255'
-        loopback: 'yes'
-        pim_enable: 'yes'
+        type: 'loopback'
 
-      GigabitEthernet1/0/1:
-        name: 'Backbone interface to Spine-01'
-        ip_address: '172.16.13.3'
-        subnet_mask: '255.255.255.0'
-        loopback: 'no'
-        pim_enable: 'yes'
+      GigabitEthernet1/0/23:
+        name: 'UNDERLAY-FABRIC'
+        type: 'slave'
+        etherchannel_number: '1'
 
-      GigabitEthernet1/0/2:
-        name: 'Backbone interface to Spine-02'
-        ip_address: '172.16.23.3'
-        subnet_mask: '255.255.255.0'
-        loopback: 'no'
-        pim_enable: 'yes' 
+      GigabitEthernet1/0/24:
+        name: 'UNDERLAY-FABRIC'
+        type: 'slave'
+        etherchannel_number: '1'
+
+      Port-channel1:
+        name: 'UNDERLAY-FABRIC'
+        type: 'master'
 
     <...snip...>
 
@@ -385,409 +377,5 @@ In this section, the configurations of the interfaces are defined.
     **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
     **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
-
-    **loopback** / :red:`mandatory`                 | This option tells whether the interface is loopback or not.
-
-                                                    **Choices:**
-
-                                                    * yes
-
-                                                    * no
-
-    **pim_enable** / :red:`mandatory`               | This option tells whether PIM must be enabled on the interface.
-
-                                                    **Choices:**
-
-                                                    * yes
-
-                                                    * no
     =============================================== ==========================================================================
-
-OSPF section
-------------
-
-This section defines the OSPF parameters.
-
-By default, next OSPF configurations are applied:
-
-* Interface network type - **point-to-point**
-
-* OSPF process ID - **1**
-
-* OSPF area number - **0**
-
-OSPF **router-id** is a configurable parameter.
-
-.. code-block:: yaml
-
-    ospf:
-      router_id: '172.16.255.3'
-
-    <...snip...>
-
-.. table::
-    :widths: auto
-
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **ospf** / :red:`mandatory`                     This option defines the OSPF section.
     
-    **router_id** / :red:`mandatory`                This option defines the OSPF router-id.
-    =============================================== ==========================================================================
-
-PIM section
------------
-
-This section defines global PIM parameters. This section is optional if Ingress-Replication in the core is used.
-
-
-.. code-block:: yaml
-
-    pim:
-      rp_address: '172.16.255.255'
-    
-    <...skip...>
-
-.. table::
-    :widths: auto
-
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **pim** / :red:`mandatory`                      This option defines the PIM section.
-    
-    **rp_address** / :red:`mandatory`               This option defines the RP address.
-    =============================================== ==========================================================================
-
-MSDP section
-------------
-
-This section defines the MSDP parameters. Usually, MSDP is used for configuration RP redundancy in the underlay.
-
-This section is optional.
-
-.. code-block:: yaml
-    
-    msdp:
-      '1':
-        peer_ip: '172.16.254.2'
-        source_interface: 'Loopback1'
-        remote_as: '65001'
-
-    <...skip...>
-
-.. table::
-    :widths: auto
-
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **msdp** / :red:`mandatory`                     This option defines the MSDP section.
-    
-    **<msdp_neighbor_id>** / :red:`mandatory`       This option defines ID for the MSDP peer. This number is not used in the 
-
-                                                    switch configuration, just index number.
-
-    **peer_ip** / :red: `mandatory`                 This option defines the MSDP peer's IPv4 address.
-
-    **source_interface** / :red: `mandatory`        This option defines the IP address of the source interface which will be 
-                                                    used as a source IP for the MSDP session.
-
-    **remote_as** / :red: `mandatory`               This option is used for defining the BGP AS number of the MSDP
-                                                    peer.                               
-    =============================================== ==========================================================================
-
-BGP section
------------
-
-This section defines BGP parameters. 
-
-By default next design assumption are made:
-
-* Leafs are Route-Reflector clients
-
-* Two present Spines in the topology are Route-Reflectors
-
-
-.. code-block:: yaml
-
-    bgp:
-      as_number: '65001'
-      router_id: 'Loopback0'
-      neighbors:
-        '172.16.255.1':
-          peer_as_number: '65001'
-          source_interface: 'Loopback0'
-
-        '172.16.255.2':
-          peer_as_number: '65001'
-          source_interface: 'Loopback0'
-
-        '172.16.255.3':
-          peer_as_number: '65001'
-          source_interface: 'Loopback0'
-          rrc: 'yes'
-    
-    <...snip...>
-
-.. table::
-    :widths: auto
-
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **bgp** / :red:`mandatory`                      This option defines BGP section globally.
-    
-    **as_number** / :red:`mandatory`                This option defines BGP AS number.
-
-    **router_id** / :red:`mandatory`                This option defines interface which ip address will be used like BGP router ID.
-
-    **neighbors** / :red:`mandatory`                This option defines neighbors section.
-
-    **neigbor_ip_address** / :red:`mandatory`       This option defines BGP neighbor ip address
-
-    **peer_as_number** / :red:`mandatory`           This option defines BGP neighbor AS number
-
-    **source_interface** / :red:`mandatory`         This option defines source interface which ip address will be used like a SRC IP
-
-                                                    for BGP session.
-
-    **rrc** / :orange:`optional`                    This option defines the peer like a BGP route-reflector client.
-    =============================================== ==========================================================================
-
-Access interface configuration
-==============================
-
-This section defines configuration for the customer-facing access interfaces.
-
-By default all access interfaces will be configured like trunks with all L2VNI vlans that are mentioned in ``group_vars/overlay_db.yml``
-
-Trunk configuration
--------------------
-
-Vlans to be assigned to an interace are taken from the following in increasing **order of priority (3 > 2 > 1).**
-
-.. note::
-
-    **Trunk configuration order of priority (3 > 2 > 1)**
- 
-1. ``vlans`` in ``group_vars/overlay_db.yml`` (for ``playbook_access_add_commit/preview.yml``) or ``access_intf_cli`` in ``host_vars/inc_vars/<hostname>.yml`` 
-
-(for ``playbook_access_incremental_commit/preview.yml``)
- 
-.. code-block:: yaml
-    
-    access_interfaces:              
-      trunks:                       
-        - GigabitEthernet1/0/6     
-
-    <...snip...>
-
-
-2. ``trunk_vlan_list`` in ``access_interfaces`` dictionary
-
-.. code-block:: yaml
-    
-    access_interfaces:                
-      trunk_vlan_list: 101,102,201     
-      trunks:                         
-        - GigabitEthernet1/0/6       
-    
-    <...snip...>
-
-3. ``trunk_vlan_list`` in specific interface dictionary
-
-.. code-block:: yaml
-
-    access_interfaces:                 
-      trunks:                          
-        - GigabitEthernet1/0/6:        
-          trunk_vlan_list: 101,102   
-    
-    <...snip...>
-
-
-Access configuration
---------------------
-
-Vlan to be assigned to an interace are taken from the following in increasing **order of priority (2 > 1).**
-
-.. note::
-
-    **Access configuration order of priority (2 > 1)**
-
-1. ``access_vlan`` in ``access_interfaces`` dictionary
-
-.. code-block:: yaml
-
-    access_interfaces:               
-        access_vlan: 101 
-        access:                        
-            - GigabitEthernet1/0/6       
-        
-    <...snip...>
-    
-
-2. ``access_vlan`` in specific interface dictionary
-
-.. code-block:: yaml
-
-    access_interfaces:               
-      access:                        
-        - GigabitEthernet1/0/6:      
-          access_vlan: 102         
-
-    <...snip...>
-
-
-
-Examples
---------
-
-There is an assumption, that in ``group_vars/overlay_db.yml`` defined next vlans: :green:`101,102,201,202`
-
-Example 1
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      trunks:
-        - GigabitEthernet1/0/7
-        - GigabitEthernet1/0/8
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-**GigabitEthernet1/0/8** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-Example 2
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      access_vlan: 202
-      access:
-        - GigabitEthernet1/0/7
-        - GigabitEthernet1/0/8
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/7** - :green:`202`
-
-**GigabitEthernet1/0/8** - :green:`202`
-
-Example 3
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      trunks:
-        - GigabitEthernet1/0/6
-        - GigabitEthernet1/0/7:
-          trunk_vlan_list: 101,102,201
-      access:
-        - GigabitEthernet1/0/8
-        - GigabitEthernet1/0/9
-      access_vlan: 202
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/6** - :green:`101,102,201,202` (from ``all.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-**GigabitEthernet1/0/7** - :green:`101,102,201`
-
-**GigabitEthernet1/0/8** - :green:`202`
-
-**GigabitEthernet1/0/9** - :green:`202`
-
-Example 4
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      trunks:
-        - GigabitEthernet1/0/6
-        - GigabitEthernet1/0/7:
-          trunk_vlan_list: 101,102,201
-      trunk_vlan_list: 101,201
-      access:
-        - GigabitEthernet1/0/8
-        - GigabitEthernet1/0/9:
-          access_vlan: 102
-      access_vlan: 202
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/6** - :green:`101,201`
-
-**GigabitEthernet1/0/7** - :green:`101,102,201`
-
-**GigabitEthernet1/0/8** - :green:`202`
-
-**GigabitEthernet1/0/9** - :green:`102`
-
-Example 5
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      trunks:
-        - GigabitEthernet1/0/5
-        - GigabitEthernet1/0/6:
-          trunk_vlan_list: 101,102,201
-        - GigabitEthernet1/0/7
-      access:
-        - GigabitEthernet1/0/8:
-          access_vlan: 201
-        - GigabitEthernet1/0/9:
-          access_vlan: 102
-      access_vlan: 202
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/5** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-**GigabitEthernet1/0/6** - :green:`101,102,201`
-
-**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-**GigabitEthernet1/0/8** - :green:`201`
-
-**GigabitEthernet1/0/9** - :green:`102`
-
-Example 6
-^^^^^^^^^
-
-Content of ``host_vars/access_intf/<hostname>.yml``
-
-.. code-block:: yaml
-
-    access_interfaces:
-      trunks:
-        - GigabitEthernet1/0/7
-    access:
-        - GigabitEthernet1/0/8:
-          access_vlan: 201
-
-Vlans assigned after execution:
-
-**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
-
-**GigabitEthernet1/0/8** - :green:`201`
