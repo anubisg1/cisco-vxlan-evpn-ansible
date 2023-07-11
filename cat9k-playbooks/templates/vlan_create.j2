@@ -10,7 +10,7 @@ If action is not set in the configurations, it is "add" by default.
     {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
       {# Checking an action for the vlan - action_vlan. #}
       {% set action = vlans[vlan].action | default ('add') %}
-      {% set type = vlans[vlan].type | default ('normal') %}
+      {% set type = vlans[vlan].pvlan.type | default ('normal') %}
       {% if action == 'delete' %}
         !
         no vlan {{vlan}}
@@ -36,10 +36,10 @@ If action is not set in the configurations, it is "add" by default.
   {% for vlan in vlans %}
     {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
       {% set action = vlans[vlan].action | default ('add') %}
-      {% set type = vlans[vlan].type | default ('normal') %}
+      {% set type = vlans[vlan].pvlan.type | default ('normal') %}
       {% if action == 'add' %}
         {% if type == 'isolated' or type == 'community' %}
-          vlan {{ vlans[vlan].primary }}
+          vlan {{ vlans[vlan].pvlan.primary }}
             private-vlan association add {{ vlan }} 
         {% endif %}
       {% endif %}

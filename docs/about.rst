@@ -1,13 +1,19 @@
 About
 =====
 
-The main goal of this project is the automation of Campus EVPN Deployment based on Catalyst 9000.
+The main goal of this project is the automation of VXLAN EVPN networks with Catalyst 9000 or Nexus 9000
 
 Custom Jinja templates and Python modules are used to build an initial config and modify the network configuration.
 
 Project has a modular structure which gives an ability to introduce new features/services gradually step-by-step.
 
-* `DAG (Distributed Anycast Gateway) <https://cat9k-evpn-ansible.readthedocs.io/en/latest/input_dag.html>`_
+* `Usage Documentation <https://cisco-vxlan-evpn-ansible.readthedocs.io/en/latest/input.html>`
+
+Discalimer:
+**************
+
+This project is based on <https://github.com/Cat9kEVPN/cat9k-evpn-ansible>
+but with the goal to provide a much simpler abstraction for the end user
 
 Prerequisites:
 **************
@@ -16,8 +22,11 @@ To run Cisco cat9k EVPN ansible playbook, you will require:
 
 **Hardware**:
 
-* A linux  server (Fedroa, Ubuntu, RedHat, etc) 
-* Cat9k Switches  supporting EVPN (from x release) 
+* A linux server (Fedora, Ubuntu, RedHat, etc)
+* Supported hardware:
+  * Catalayst 9000 (Tested with 9300 and 9500 series)
+    * network-advantage license
+    * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
  
 **Network-Expertise**:
 
