@@ -16,9 +16,6 @@ To run those ansibles playbook, you will require:
   * Catalayst 9000 (Tested with 9300 and 9500 series)
     * network-advantage license
     * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
-  * Nexus 9k Switches supporting EVPN
-    * Network LAN1-k9 or Essential
-    * NX-OS >= 9.3
 
 **Network-Expertise**:
 
