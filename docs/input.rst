@@ -22,10 +22,10 @@ VNI definition
 VNI are automatically generated from the VRF's ID:
 
 **L3VNI** is the VRF ID with 0000 appended.
-For example if the VRF ID is 100, the L3VNI will be **100**0000
+For example if the VRF ID is 100, the L3VNI will be 1000000
 
-**L2VNI** is the VRF ID with the vlan numnber appended (0s are prependede to the vlan id so that we always have 4 digits)
-For example if the VRF ID is 100 and the vlan id is 20, the L2VNI will be **100**0020
+**L2VNI** is the VRF ID with the vlan numnber appended (0s are prepended to the vlan id so that we always have 4 digits)
+For example if the VRF ID is 100 and the vlan id is 20, the L2VNI will be 1000020
 
 RD definition
 *************
