@@ -182,11 +182,11 @@ This section defines which loopbacks should be used for the underlay configurati
 
 **router_id** / :red:`mandatory`                 This option defines the name of the interface used as a Router ID.
 
-                                                 The interface defined here will be used on all switches
+                                                 The interface defined here will be used on all switches.
 
 **vtep_name** / :red:`mandatory`                 This option defines the name of the interface used as the source VTEP.
 
-                                                 The interface defined here will be used on all the leaf switches
+                                                 The interface defined here will be used on all leaf switches.
 
 ================================================ ==========================================================================
 
