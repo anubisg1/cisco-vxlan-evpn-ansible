@@ -532,6 +532,10 @@ In this section, the configurations of the underlay interfaces are defined.
 
                                                   * slave
 
+**etherchannel_number** / :red:`mandatory`      This option defines what port-channel (master) the interface belongs to.
+
+                                                This field applies only if the type is **slave**
+
 **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
                                                 This field applies only if the type is **loopback**
