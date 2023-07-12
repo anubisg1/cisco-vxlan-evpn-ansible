@@ -252,7 +252,7 @@ This section defines all BGP details required for the configuration of the under
                                                  forming peerings with the leafs.
                                                  
                                                  It must be in the same range as the IPs configured under the interface
-                                                 defined as router_id in the sectionunderlay.
+                                                 defined as router_id in the section underlay.
                                                 
 **spines** / :red:`mandatory`                    This option defines a list of spine switches.
 
