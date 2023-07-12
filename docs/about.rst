@@ -25,7 +25,7 @@ To run Cisco cat9k EVPN ansible playbook, you will require:
 * A linux server (Fedora, Ubuntu, RedHat, etc)
 * Supported hardware:
  * Catalayst 9000 (Tested with 9300 and 9500 series)
-  * test
+ * Nexus 9300 (Playbooks for Nexus 9300 are not yet available)
 
 **Licensing and Software Versions**:
 
