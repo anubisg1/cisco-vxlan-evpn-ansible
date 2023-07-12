@@ -580,3 +580,36 @@ In this section, the configurations of the overlay interfaces are defined.
 
 **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
 =============================================== ==========================================================================
+
+access_intf/<node_name>.yml
+=========================
+
+The file ``<node_name>.yml`` contains configurations, related to access and trunk ports, related to a node.
+
+Let us review the configuration in ``<node_name>.yml``.
+
+Access interfaces section
+-------------------------
+
+This section defines the hostname of a node.
+
+.. code-block:: yaml
+
+    access_interfaces:
+      trunks:
+        - GigabitEthernet1/0/6
+      access:
+        - GigabitEthernet1/0/7:
+            access_vlan: 102
+
+    <...snip...>
+
+
+.. table::
+    :widths: auto
+
+=============================================== ==========================================================================
+**Parameter**                                                            **Comments**
+=============================================== ==========================================================================
+**access_interfaces** / :orange:`optional`      This option defines the access_interfaces section.
+=============================================== ==========================================================================
