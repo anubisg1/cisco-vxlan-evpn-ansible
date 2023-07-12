@@ -518,11 +518,11 @@ In this section, the configurations of the underlay interfaces are defined.
 
 **name** / :orange:`optional`                   This option defines the interface description.
 
-**type** / :orange:`optional`                   This option defines what type of interface is being configured.
+**type** / :orange:`optional`                   | This option defines what type of interface is being configured.
 
                                                 | When not defined, it defaults to **physical**
 
-                                                 **Choices:**
+                                                **Choices:**
 
                                                   * physical
 
