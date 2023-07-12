@@ -24,16 +24,17 @@ To run Cisco cat9k EVPN ansible playbook, you will require:
 
 * A linux server (Fedora, Ubuntu, RedHat, etc)
 * Supported hardware:
-  * Catalayst 9000 (Tested with 9300 and 9500 series)
+ * Catalayst 9000 (Tested with 9300 and 9500 series)
+  * test
 
-**Licensing and Software Versions**
+**Licensing and Software Versions**:
 
 * Catalayst 9000
-  * network-advantage license
-  * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
+ * network-advantage license
+ * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
 * Nexus 9300
-  * Essential or LAN1K9 licenses
-  * NX-OS >= 9.0
+ * Essential or LAN1K9 licenses
+ * NX-OS >= 9.0
  
 **Network-Expertise**:
 
