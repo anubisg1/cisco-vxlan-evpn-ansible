@@ -181,9 +181,11 @@ This section defines which loopbacks should be used for the underlay configurati
 **underlay** / :red:`mandatory`                  This option defines the underlay section.
 
 **router_id** / :red:`mandatory`                 This option defines the name of the interface used as a Router ID.
+
                                                  The interface defined here will be used on all switches
 
 **vtep_name** / :red:`mandatory`                 This option defines the name of the interface used as the source VTEP.
+
                                                  The interface defined here will be used on all the leaf switches
 
 ================================================ ==========================================================================
@@ -212,6 +214,7 @@ This section defines all OSPF details required for the underlay.
 **password** / :red:`mandatory`                   This option defines the ospf password used to authenticate neighbors.
 
 **area** / :red:`mandatory`                       This option defines the ospf area used in the underlay.
+
                                                   It accepts dotted format areas. In this example, area 10 is 0.0.0.10
 
 ================================================ ==========================================================================
@@ -246,14 +249,16 @@ This section defines all BGP details required for the configuration of the under
 **password** / :red:`mandatory`                  This option defines the bgp password used to authenticate neighbors.
 
 **leafs_range** / :red:`mandatory`               This option defines the prefix range the spines will listen to when
-                                                 forming peerings with the leafs. It must be in the same range as the
-                                                 IPs configured under the interface defined as router_id in the section
-                                                 underlay.
-                                                
-**spines** / :red:`mandatory`                    This option defines a list of spine switches. The IPs defined here are
-                                                 the same IPs configured under the interface defined as router_id in 
-                                                 the section underlay for all the Spine switches.
+                                                 forming peerings with the leafs.
                                                  
+                                                 It must be in the same range as the IPs configured under the interface
+                                                 defined as router_id in the sectionunderlay.
+                                                
+**spines** / :red:`mandatory`                    This option defines a list of spine switches.
+
+                                                 The IPs defined here are the same IPs configured under the interface
+                                                 defined as router_id in the section underlay for all the Spine switches.
+
 ================================================ ==========================================================================
 
 overlay_db.yml
