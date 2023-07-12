@@ -468,25 +468,25 @@ This section defines the hostname of a node.
 **hostname** / :orange:`optional`               This option defines the remote device's hostname.
 =============================================== ==========================================================================
 
-Interface section
------------------
+Underlay Interfaces section
+---------------------------
 
-In this section, the configurations of the interfaces are defined.
+In this section, the configurations of the underlay interfaces are defined.
 
 .. code-block:: yaml
 
-    interfaces:
+    underlay_interfaces:
       Loopback0:
         name: 'ROUTER-ID'
+        type: 'loopback'
         ip_address: '192.168.210.11'
         subnet_mask: '255.255.255.255'
-        type: 'loopback'
 
       Loopback1:
         name: 'VTEP'
+        type: 'loopback'
         ip_address: '192.168.211.11'
         subnet_mask: '255.255.255.255'
-        type: 'loopback'
 
       GigabitEthernet1/0/23:
         name: 'UNDERLAY-FABRIC'
@@ -511,16 +511,34 @@ In this section, the configurations of the interfaces are defined.
 =============================================== ==========================================================================
 **Parameter**                                                            **Comments**
 =============================================== ==========================================================================
-**interfaces** / :red:`mandatory`               This option defines the interface section.
+**underlay_interfaces** / :red:`mandatory`      This option defines the interface section.
 
 **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
                                                 ``GigabitEthernet1/0/1``
 
 **name** / :orange:`optional`                   This option defines the interface description.
 
+**type** / :orange:`optional`                   This option defines what type of interface is being configured.
+
+                                                |When not defined, it defaults to **physical**
+
+                                                 **Choices:**
+
+                                                  * physical
+
+                                                  * loopback
+
+                                                  * master
+
+                                                  * slave
+
 **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
+                                                This field applies only if the type is **loopback**
+
 **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
+
+                                                This field applies only if the type is **loopback**
 =============================================== ==========================================================================
 
 Overlay Interfaces section

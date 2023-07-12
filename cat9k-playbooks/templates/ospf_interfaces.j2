@@ -6,8 +6,8 @@ Default OSPF network type in underlay is P2P for speeding up the convergence tim
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 
 {# configure ospf under interface and set ospf interface P2P if not loopback #}
-{% for interface in interfaces %}
-    {% set type = interfaces[interface].type | default ('physical') %}
+{% for interface in underlay_interfaces %}
+    {% set type = underlay_interfaces[interface].type | default ('physical') %}
     {% if type != 'slave' %}
         !
         interface  {{ interface }}
@@ -26,7 +26,7 @@ Default OSPF network type in underlay is P2P for speeding up the convergence tim
 {# configure ospf process and ospf router-id #}
 !
 router ospf 1
-  router-id {{ interfaces[underlay.router_id].ip_address }}
+  router-id {{ underlay_interfaces[underlay.router_id].ip_address }}
   log-adjacency-changes detail
   nsr
   {% if ospf.password is defined %}

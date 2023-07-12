@@ -1,6 +1,6 @@
 hostname: 'SPINE-1'
 
-interfaces:
+underlay_interfaces:
   Loopback0:
     name: 'ROUTER-ID'
     ip_address: '192.168.210.1'

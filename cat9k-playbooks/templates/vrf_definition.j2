@@ -24,7 +24,7 @@ Note: after deleting vrf, respective subsection for vrf under bgp will be delete
         {% if vrfs[vrf].description is defined %}
           description {{ vrfs[vrf].description }}
         {% endif %}
-        rd {{ interfaces.Loopback0.ip_address}}:{{ 4 ~ vrfs[vrf].id }}
+        rd {{ underlay_interfaces.Loopback0.ip_address}}:{{ 4 ~ vrfs[vrf].id }}
         {% for af in vrfs[vrf].afs %}
           {# Checking an action for the AF #}
           {% set action = vrfs[vrf].afs[af].action | default ('add') %}

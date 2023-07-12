@@ -44,7 +44,7 @@
         diff_match: none
       register: result
 
-    - name: Configure ip addresses
+    - name: Configure underlay interfaces
       ansible.netcommon.cli_config:
         config: "{{ lookup('template', './templates/underlay_interfaces.j2') }}"
         diff_match: none
