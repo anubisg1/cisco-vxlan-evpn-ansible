@@ -1,43 +1,3 @@
-Abstracted Configurations
-#################################
-
-DAG (Distributed Anycast Gateway)
-*********************************
-
-Distributed anycast gateway feature for EVPN VXLAN is a default gateway addressing mechanism that enables the use of the same gateway IP addresses 
-across all the leaf switches that are part of a VXLAN network.
-
-.. warning::
-
-    The same subnet mask and IP address must be configured on all the switch virtual interfaces (SVIs) that act as a distributed anycast gateway (DAG).
-
-BUM (Broadcast, Unicast, Multicast) Replication
-***********************************************
-
-Ingress Replication is used without requiring any input from the user
-
-VNI definition
-**************
-
-VNI are automatically generated from the VRF's ID:
-
-**L3VNI** is the VRF ID with 0000 appended.
-For example if the VRF ID is 100, the L3VNI will be 1000000
-
-**L2VNI** is the VRF ID with the vlan numnber appended (0s are prepended to the vlan id so that we always have 4 digits)
-For example if the VRF ID is 100 and the vlan id is 20, the L2VNI will be 1000020
-
-RD definition
-*************
-
-Route Distinguishers are defined as **Loopback0_IP:VRF_Transit_vlan**
-
-RT definition
-*************
-
-For the VRFs, Route Targets are defined as **BGP_ASN:L3VNI**
-For Vlans, the Route Targets are left to **auto** and therefore equal to **BGP_ASN:L2VNI**
-
 Inputs
 ######
 
@@ -67,8 +27,8 @@ Inventory.yml
 
 ``leaf`` and ``spine`` are two roles. Each node should be placed under one of these roles.
 
-``Leaf-1`` , ``Spine-01`` are the hostnames (nodes). Keep in mind that the names should be with the name of the configuration files 
-in the directory ``host_vars``.
+``Leaf-01`` , ``Spine-01`` are the hostnames (nodes). Keep in mind that the names should be with the name of the configuration files 
+in the directory ``host_vars/node_vars``.
 
 ``ansible_host`` is the IP address of the management interface.
 
@@ -149,6 +109,123 @@ In this example, unencrypted password is used. Feel free to use HIDDEN (7)
 
 If ``enable`` password should be used, check the `Enable Mode <https://docs.ansible.com/ansible/latest/network/user_guide/platform_ios.html>`_ documentation.
 
+underlay_db.yml
+==============
+
+In this file information about the underlay is stored.
+Let's check this file gradually step-by-step.
+
+STP definition
+--------------
+
+This section defines spanning-tree parameters which are true globally for all Leaf switches.
+
+.. code-block:: yaml
+    
+    stp:
+      priority: '0'
+    
+    <...snip...>
+
+.. table::
+   :widths: auto
+
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+**stp** / :red:`mandatory`                       This option defines the stp section.
+
+**priority** / :red:`mandatory`                  This option defines stp priority. Only valid STP priority values are allowed
+
+================================================ ==========================================================================
+
+Domain Name definition
+----------------------
+
+This section defines domain name for all the switches.
+
+.. code-block:: yaml
+
+    domain_name: 'mylab.lab'
+
+    <...snip...>
+
+=============================================== ========================================================================== 
+**Parameter**                                                            **Comments**
+=============================================== ==========================================================================
+**domain_name** / :orange:`optional`            This option defines the domain name for all the switches
+=============================================== ==========================================================================
+
+Underlay definition
+-------------------
+
+This section defines which loopbacks should be used for the underlay configurations.
+
+.. code-block:: yaml
+    
+    underlay:
+      router_id: 'Loopback0'
+      vtep_name: 'Loopback1'
+    
+    <...snip...>
+
+.. table::
+   :widths: auto
+
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+
+================================================ ==========================================================================
+
+OSPF definition
+---------------
+
+This section defines all OSPF details required for the underlay.
+
+.. code-block:: yaml
+    
+    ospf:
+      password: 'cisco123'
+      area: '0.0.0.10'
+    
+    <...snip...>
+
+.. table::
+   :widths: auto
+
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+
+================================================ ==========================================================================
+
+BGP definition
+--------------
+
+This section defines all BGP details required for the configuration of the underlay.
+
+.. code-block:: yaml
+    
+    bgp:
+      as_number: '65010'
+      password: 'cisco123'
+      leafs_range: '192.168.210.0/24'
+      spines:
+      - '192.168.210.1'
+      - '192.168.210.2'
+    
+    <...snip...>
+
+.. table::
+   :widths: auto
+
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+
+================================================ ==========================================================================
+
 overlay_db.yml
 ==============
 
@@ -164,16 +241,16 @@ This section defines global L2VPN EVPN parameters.
     
     anycastgateway_mac: '0000.2222.3333'
     
-    <...skip...>
+    <...snip...>
 
 .. table::
    :widths: auto
 
-   ================================================ ==========================================================================
-     **Parameter**                                                            **Comments**
-   ================================================ ==========================================================================
-   **anycastgateway_mac** / :red:`mandatory`              This option defines the MAC address to be used by each DAG SVI.
-   ================================================ ==========================================================================
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+**anycastgateway_mac** / :red:`mandatory`              This option defines the MAC address to be used by each DAG SVI.
+================================================ ==========================================================================
 
 VRF definition
 --------------
@@ -277,56 +354,56 @@ This section defines the VLANs and their stitching with EVIs (EVPN instance) and
 .. table::
    :widths: auto
 
-   ================================================ ==========================================================================
-     **Parameter**                                                            **Comments**
-   ================================================ ==========================================================================
-   **vlans** / :red:`mandatory`                     This option defines the VLAN section.
+================================================ ==========================================================================
+**Parameter**                                                            **Comments**
+================================================ ==========================================================================
+**vlans** / :red:`mandatory`                     This option defines the VLAN section.
 
-   **<vlan_id>** / :red:`mandatory`                 This option defines the VLAN ID. 
+**<vlan_id>** / :red:`mandatory`                 This option defines the VLAN ID. 
    
-                                                    In the example shown, VLAN IDs are **101**, **102**, **103**, etc.
+                                                 In the example shown, VLAN IDs are **101**, **102**, **103**, etc.
    
-   **description** / :orange:`optional`             This option defines the VLAN description.
+**description** / :orange:`optional`             This option defines the VLAN description.
 
-   **vrf** / :red:`mandatory`                       This option defines the VRF to be used to generate the VNIs as well the
-                                                    VRF used by the SVI, if enabled
+**vrf** / :red:`mandatory`                       This option defines the VRF to be used to generate the VNIs as well the
+                                                 VRF used by the SVI, if enabled
                                                     
-   **svis** / :orange:`optional`                    This option defines if an SVI for the VLAN needs to be created
+**svis** / :orange:`optional`                    This option defines if an SVI for the VLAN needs to be created
 
-   **ipv4** / :red:`mandatory`                      This option defines the IPv4 address configured on the SVI. 
+**ipv4** / :red:`mandatory`                      This option defines the IPv4 address configured on the SVI. 
    
-   **status** / :red:`mandatory`                    | This option tells whether the SVI will be shut or not.
+**status** / :red:`mandatory`                    | This option tells whether the SVI will be shut or not.
 
-                                                    **Choices:**
+                                                 **Choices:**
 
-                                                    * enabled
+                                                  * enabled
 
-                                                    * disabled
+                                                  * disabled
 
-   **pvlan** / :orange:`optional`                    This option defines if the vlan is a private vlan
+**pvlan** / :orange:`optional`                    This option defines if the vlan is a private vlan
 
-   **type** / :red:`mandatory`                      | This option defines what private vlan type the vlan is.
+**type** / :red:`mandatory`                      | This option defines what private vlan type the vlan is.
 
-                                                    **Choices:**
+                                                 **Choices:**
 
-                                                    * primary
+                                                  * primary
 
-                                                    * isolated
+                                                  * isolated
 
-                                                    * community
+                                                  * community
 
-   **primary** / :red:`mandatory`                   The primary vlan associated to the secondary vlan.
+**primary** / :red:`mandatory`                   The primary vlan associated to the secondary vlan.
 
-                                                    This field applies only if the type is **isolated** or **community**
-   ================================================ ==========================================================================
+                                                 This field applies only if the type is **isolated** or **community**
+================================================ ==========================================================================
           
 host_vars
 *********
 
 This directory contains configuration specific to a device.
 
-<node_name>.yml
-===============
+node_vars/<node_name>.yml
+=========================
 
 The file ``<node_name>.yml`` contains configurations, usually the ones related to interface and underlay, specific to a node.
 
@@ -347,11 +424,11 @@ This section defines the hostname of a node.
 .. table::
     :widths: auto
 
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **hostname** / :orange:`optional`               This option defines the remote device's hostname.
-    =============================================== ==========================================================================
+=============================================== ==========================================================================
+**Parameter**                                                            **Comments**
+=============================================== ==========================================================================
+**hostname** / :orange:`optional`               This option defines the remote device's hostname.
+=============================================== ==========================================================================
 
 Interface section
 -----------------
@@ -393,20 +470,20 @@ In this section, the configurations of the interfaces are defined.
 .. table::
     :widths: auto
 
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **interfaces** / :red:`mandatory`               This option defines the interface section.
+=============================================== ==========================================================================
+**Parameter**                                                            **Comments**
+=============================================== ==========================================================================
+**interfaces** / :red:`mandatory`               This option defines the interface section.
 
-    **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
-                                                    ``GigabitEthernet1/0/1``
+**<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
+                                                ``GigabitEthernet1/0/1``
 
-    **name** / :orange:`optional`                   This option defines the interface description.
+**name** / :orange:`optional`                   This option defines the interface description.
 
-    **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
+**ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
-    **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
-    =============================================== ==========================================================================
+**subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
+=============================================== ==========================================================================
 
 Overlay Interfaces section
 --------------------------
@@ -429,17 +506,17 @@ In this section, the configurations of the overlay interfaces are defined.
 .. table::
     :widths: auto
 
-    =============================================== ==========================================================================
-    **Parameter**                                                            **Comments**
-    =============================================== ==========================================================================
-    **overlay_interfaces** / :red:`mandatory`       This option defines the overlay_interfaces section.
+=============================================== ==========================================================================
+**Parameter**                                                            **Comments**
+=============================================== ==========================================================================
+**overlay_interfaces** / :red:`mandatory`       This option defines the overlay_interfaces section.
 
-    **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
-                                                    ``GigabitEthernet1/0/1``
+**<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
+                                                ``GigabitEthernet1/0/1``
 
-    **name** / :orange:`optional`                   This option defines the interface description.
+**name** / :orange:`optional`                   This option defines the interface description.
 
-    **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
+**ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
-    **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
-    =============================================== ==========================================================================
+**subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
+=============================================== ==========================================================================

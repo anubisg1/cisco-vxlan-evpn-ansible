@@ -7,7 +7,7 @@ Custom Jinja templates and Python modules are used to build an initial config an
 
 Project has a modular structure which gives an ability to introduce new features/services gradually step-by-step.
 
-* `Usage Documentation <https://cisco-vxlan-evpn-ansible.readthedocs.io/en/latest/input.html>`
+* `Usage Documentation <https://cisco-vxlan-evpn-ansible.readthedocs.io/en/latest/input.html>`_
 
 Discalimer:
 **************
@@ -25,8 +25,15 @@ To run Cisco cat9k EVPN ansible playbook, you will require:
 * A linux server (Fedora, Ubuntu, RedHat, etc)
 * Supported hardware:
   * Catalayst 9000 (Tested with 9300 and 9500 series)
-    * network-advantage license
-    * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
+
+**Licensing and Software Versions**
+
+* Catalayst 9000
+  * network-advantage license
+  * IOS-XE version >= 17.03 for leafs or >= 17.11 for the spines ( required by the dynamic peering configuration )
+* Nexus 9300
+  * Essential or LAN1K9 licenses
+  * NX-OS >= 9.0
  
 **Network-Expertise**:
 

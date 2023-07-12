@@ -1,22 +1,17 @@
 Playbooks description
 *********************
 
-In this section every playbook function will be described. Playbooks for DAG provisioning are stored in ``cat9k-evpn-ansible/dag``
+In this section every playbook function will be described. Playbooks for DAG provisioning are stored in ``cat9k-playbooks``
 
 .. code-block::
 
-    ~/cat9k-evpn-ansible/dag$ ls | grep playbook
+    ~/cat9k-playbooks$ ls | grep playbook
 
     playbook_access_add_commit.yml
     playbook_access_add_preview.yml
-    playbook_access_incremental_commit.yml
-    playbook_access_incremental_preview.yml
-    playbook_cleanup.yml
-    playbook_output.yml
+    playbook_collect_show_commands.yml
+    playbook_lab_cleanup.yml
     playbook_overlay_commit.yml
-    playbook_overlay_delete_commit.yml
-    playbook_overlay_delete_generate.yml
-    playbook_overlay_delete_preview.yml
     playbook_overlay_incremental_commit.yml
     playbook_overlay_incremental_generate.yml
     playbook_overlay_incremental_preview.yml
@@ -25,6 +20,47 @@ In this section every playbook function will be described. Playbooks for DAG pro
     playbook_underlay_commit.yml
     playbook_underlay_preview.yml
     playbook_yml_validation.yml
+
+YAML validation
+===============
+
+playbook_yml_validation.yml
+---------------------------
+
+This playbook will check ``group_vars/overlay_db.yaml`` and ``group_vars/underlay_db.yaml`` for possible issues.
+
+.. code-block::
+
+    ansible-playbook -i ../inventory.yml playbook_yml_validation.yml
+
+In case of issues it will be highlighed in the playbook output.
+
+Below you can find few examples.
+
+Example 1
+^^^^^^^^^
+
+Invalid Spanning Tree priority
+
+.. code-block:: yaml
+
+    stp:
+      priority: '15'
+  <...snip...>
+
+
+Playbook output:
+
+.. code-block::
+  
+    ValueError: Configure STP priority is not a valid value.
+      supported values are: 0, 4096, 8192, 12288, 16384, 20480, 24576, 28672, 32768, 36864, 40960, 45056, 49152, 53248, 57344, 61440
+
+Example 2
+^^^^^^^^^
+
+Example 3
+^^^^^^^^^
 
 Underlay provisioning
 =====================
@@ -42,13 +78,13 @@ Files will be stored in ``preview_files/<hostname>-underlay.txt`` files.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_underlay_preview.yml 
+    ansible-playbook -i ../inventory.yml playbook_underlay_preview.yml 
 
 Output files could be found in ``preview_files`` directory.
 
 .. code-block::
 
-    ~/cat9k-evpn-ansible/dag/preview_files$ ls | grep underlay
+    ~/cat9k-playbooks/preview_files$ ls | grep underlay
     
     Leaf-01-underlay.txt
     Leaf-02-underlay.txt
@@ -92,7 +128,7 @@ This playbook is generating config in text format for underlay provisioning whic
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_underlay_commit.yml 
+    ansible-playbook -i ../inventory.yml playbook_underlay_commit.yml 
 
 For checking the configuration that is deployed by Ansible on the switch next configuration could be used:
 
@@ -108,258 +144,6 @@ For checking the configuration that is deployed by Ansible on the switch next co
 
 Overlay provisioning
 ====================
-
-playbook_yml_validation.yml
----------------------------
-
-This playbook will check ``group_vars/overlay_db.yaml`` for possible issues.
-
-.. code-block::
-
-    ansible-playbook -i inventory.yml playbook_yml_validation.yml
-
-In case of issues it will be highlighed in the playbook output.
-
-Below you can find few examples.
-
-Example 1
-^^^^^^^^^
-
-IPv6 present under SVI's but not present under vrf
-
-.. code-block:: yaml
-
-  vrfs:
-    green:
-      ipv6_unicast: 'enable'
-      description: 'green VRF definition'
-      rd: '1:1'
-      afs:
-        ipv4:
-          rt_import:
-            - '1:1'
-            - '1:1 stitching'
-          rt_export: 
-            - '1:1'
-            - '1:1 stitching'
-    
-  <...snip...>
-
-  svis:
-    101:
-      svi_type: 'access'
-      vrf: 'green'
-      ipv4: '10.1.101.1 255.255.255.0'
-      ipv6:
-        - '2001:101::1/64'
-      mac: 'dead.beef.abcd'
-    102:
-     svi_type: 'access'
-     vrf: 'green'
-     ipv4: '10.1.102.1 255.255.255.0'
-     ipv6:
-       - '2001:102::1/64'
-     mac: 'dead.beef.abcd'
-    901:
-     svi_type: 'core'
-     vrf: 'green'
-     src_intf: 'Loopback1'
-     ipv6_enable: 'yes'
-
-  <...snip...>
-
-
-Playbook output:
-
-.. code-block::
-
-		"yaml_precheck": [
-				"partial validation for vlan and svi is done successfully",
-				"complete validation for vlan and svi is done successfully",
-				[
-					"ipv6 parameter present under SVI 101 but not present under VRF green",
-					"ipv6 parameter present under SVI 102 but not present under VRF green",
-					"ipv6 parameter present under SVI 901 but not present under VRF green"
-				]
-			]
-		}
-
-Example 2
-^^^^^^^^^
-
-Mandatory parameter ``ipv4`` is not found under vrf.
-
-.. code-block:: yaml
-
-  vrfs:
-    blue:
-      rd: '2:2'
-        afs:
-          #ipv4:
-          #  rt_import: 
-          #    - '2:2'
-          #    - '2:2 stitching'
-          #  rt_export: 
-          #    - '2:2'
-          #    - '2:2 stitching'
-          ipv6:
-            rt_import: 
-              - '2:2'
-              - '2:2 stitching'
-            rt_export: 
-              - '2:2'
-              - '2:2 stitching'  
-
-  <...snip...>
-
-Playbook output:
-
-.. code-block::
-
-    "yaml_precheck": [
-            "partial validation for vlan and svi is done successfully",
-            "complete validation for vlan and svi is done successfully",
-            [
-            "mandatory parameter not found 'ipv4' under VRF blue"
-            ]
-        ]
-    }
-
-Example 3
-^^^^^^^^^
-
-Mandatory parameter ``rd`` is missed under vrf configuration
-
-.. code-block:: yaml
-
-  vrfs:
-    green:
-      ipv6_unicast: 'enable'
-      description: 'green VRF defn'
-      #rd: '1:1'
-
-  <...snip...>
-
-Playbook output:
-
-.. code-block::
-
-		"yaml_precheck": [
-				"partial validation for vlan and svi is done successfully",
-				"complete validation for vlan and svi is done successfully",
-				[
-					"mandatory parameter 'rd' not found under vrfs green"
-				]
-			]
-		}
-
-Example 4
-^^^^^^^^^
-
-Mandatory parameters ``rt_import`` and ``rt_export`` are not found under ipv4 section for VRFs :green:`green` and :blue:`blue`
-
-.. code-block:: yaml
-
-  vrfs:
-    green:
-      ipv6_unicast: 'enable'
-      description: 'green VRF defn'
-      rd: '1:1'
-      afs:
-        ipv4:
-          #rt_import: 
-          # - '1:1'
-          # - '1:1 stitching'
-          rt_export: 
-            - '1:1'
-            - '1:1 stitching' 
-        ipv6:
-          rt_import:
-            - '1:1'
-            - '1:1 stitching'
-          rt_export:
-            - '1:1'
-            - '1:1 stitching' 
-    blue:
-      rd: '2:2'
-      afs:
-        ipv4:
-          rt_import: 
-            - '2:2'
-            - '2:2 stitching'
-          #rt_export: 
-          # - '2:2'
-          # - '2:2 stitching'
-        ipv6:
-          rt_import: 
-            - '2:2'
-            - '2:2 stitching'
-          rt_export: 
-            - '2:2'
-
-  <...snip...>
-
-Playbook output:
-
-.. code-block::
-
-		"yaml_precheck": [
-				"partial validation for vlan and svi is done successfully",
-				"complete validation for vlan and svi is done successfully",
-				[
-					"mandatory parameter not found 'rt_import' under VRF green",
-					"mandatory parameter not found 'rt_export' under VRF blue"
-				]
-			]
-		}
-
-Example 5
-^^^^^^^^^
-
-Mandatory parameters ``evi``, ``vni`` are missed under ``vlans`` section and for VLAN102 parameter ``replication_mcast`` is present for 
-``replication_type: 'ingress'`` which is not expected.
-
-.. code-block:: yaml
-
-  vlans:
-  #vrf green vlans
-    101:
-      vlan_type: 'access'
-      description: 'Access_VLAN_101'
-      #vni: '10101'
-      #evi: '101'
-      type: 'vlan-based'
-      encapsulation: 'vxlan'
-      replication_type: 'static'
-      replication_mcast: '225.0.0.101'
-   
-    102:
-      vlan_type: 'access'
-      description: 'Access_VLAN_102'
-      vni: '10102'
-      evi: '102'
-      type: 'vlan-based'
-      encapsulation: 'vxlan'
-      replication_type: 'ingress'
-      replication_mcast: '225.0.0.102'
-  
-  <...snip...>
-
-Playbook output:
-
-.. code-block::
-
-		"yaml_precheck": [
-				[
-					"mandatory parameter 'vni' not found under vlan 101",
-					"mandatory parameter 'evi' not found under vlan 101"
-				],
-				[
-					"replication_mcast ip is present of VLAN 102 for replication_type ingress is not expected "
-				],
-				"vrf validation is done successfully"
-			]
-		}
 
 playbook_overlay_precheck.yml
 -----------------------------
@@ -436,7 +220,7 @@ To run playbook use the below command
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_overlay_precheck.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_precheck.yml
 
 Successfull result should be similar to next output
 
@@ -471,13 +255,13 @@ Files will be stored in ``preview_files/<hostname>-overlay.txt`` files.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_overlay_preview.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_preview.yml
 
 Output files could be found in ``preview_files`` directory.
 
 .. code-block::
 
-    ~/cat9k-evpn-ansible/dag/preview_files$ ls | grep overlay
+    ~/cat9k-playbooks/preview_files$ ls | grep overlay
     
     Leaf-01-overlay.txt
     Leaf-02-overlay.txt
@@ -529,7 +313,7 @@ This playbook is generating config in text format for overlay provisioning which
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_overlay_commit.yml 
+    ansible-playbook -i ../inventory.yml playbook_overlay_commit.yml 
 
 For checking the configuration that is deployed by Ansible on the switch next configuration could be used:
 
@@ -822,13 +606,13 @@ directory ``host_vars/inc_vars/``
 
 .. code-block:: 
 
-    ansible-playbook -i inventory.yml playbook_overlay_incremental_generate.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_incremental_generate.yml
 
 Output is generated to the files ``host_vars/inc_vars/<hostname>.yml``
 
 .. code-block:: yaml
 
-    ~/cat9k-evpn-ansible/dag$ cat host_vars/inc_vars/Leaf-01.yml 
+    ~/cat9k-playbooks$ cat host_vars/inc_vars/Leaf-01.yml 
 
     access_inft_cli:
     - 202
@@ -861,13 +645,13 @@ inputs from ``playbook_overlay_incremental_preview.yml``.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_overlay_incremental_preview.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_incremental_preview.yml
 
 Output could be checked in ``preview_files/<hostname>-inc.txt``.
 
 .. code-block::
 
-    :~/cat9k-evpn-ansible/dag$ cat preview_files/Leaf-01-inc.txt 
+    :~/cat9k-playbooks$ cat preview_files/Leaf-01-inc.txt 
  
     ! vrf block 
     vrf definition blue
@@ -912,7 +696,7 @@ The playbook can be used separtely from previous two.
 
 .. code-block::
     
-    ansible-playbook -i inventory.yml playbook_overlay_incremental_commit.yml   
+    ansible-playbook -i ../inventory.yml playbook_overlay_incremental_commit.yml   
 
 Incremental overlay deleting
 ============================
@@ -1120,13 +904,13 @@ and generate internal configuration files in directory ``host_vars/delete_vars/`
 
 .. code-block:: 
 
-    ansible-playbook -i inventory.yml playbook_overlay_delete_generate.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_delete_generate.yml
 
 Output is generated to the files ``host_vars/delete_vars/<hostname>.yml``
 
 .. code-block:: yaml
 
-    ~/cat9k-evpn-ansible/dag$ cat host_vars/delete_vars/Leaf-01.yml 
+    ~/cat9k-playbooks$ cat host_vars/delete_vars/Leaf-01.yml 
 
     access_inft_cli:
     - 202
@@ -1159,13 +943,13 @@ inputs from ``playbook_overlay_delete_preview.yml``.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_overlay_delete_preview.yml
+    ansible-playbook -i ../inventory.yml playbook_overlay_delete_preview.yml
 
 Output could be checked in ``preview_files/<hostname>-delete.txt``.
 
 .. code-block::
 
-    :~/cat9k-evpn-ansible/dag$ cat preview_files/Leaf-01-delete.txt 
+    :~/cat9k-playbooks$ cat preview_files/Leaf-01-delete.txt 
 
     ! svi block 
     no interface Vlan201
@@ -1207,7 +991,7 @@ The playbook can be used separtely from previous two.
 
 .. code-block::
     
-    ansible-playbook -i inventory.yml playbook_overlay_delete_commit.yml  
+    ansible-playbook -i ../inventory.yml playbook_overlay_delete_commit.yml  
 
 Access interfaces provisioning
 ==============================
@@ -1248,7 +1032,7 @@ Let's execute the playbook.
 
 .. code-block:: 
 
-     ansible-playbook -i inventory.yml playbook_access_add_preview.yml
+     ansible-playbook -i ../inventory.yml playbook_access_add_preview.yml
 
 Outputs will be written to files ``preview_files/<hostname>-add-intf.txt``.
 
@@ -1270,7 +1054,7 @@ This playbook could be used separetly.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_access_add_commit.yml
+    ansible-playbook -i ../inventory.yml playbook_access_add_commit.yml
 
 playbook_access_incremental_preview.yml
 ---------------------------------------
@@ -1287,7 +1071,7 @@ This playbook generates list of commands that will be pushed to the remote devic
 
 .. code-block::
 
-     ansible-playbook -i inventory.yml playbook_access_incremental_preview.yml
+     ansible-playbook -i ../inventory.yml playbook_access_incremental_preview.yml
 
 Output files could be found in ``preview_files/<hostname>-inc-intf.txt``
 
@@ -1298,7 +1082,7 @@ This playbook is used for provisioning remote devices.
 
 .. code-block::
 
-    ansible-playbook -i inventory.yml playbook_access_incremental_commit.yml
+    ansible-playbook -i ../inventory.yml playbook_access_incremental_commit.yml
 
 Special playbooks
 =================
@@ -1316,7 +1100,7 @@ This playbook is very usefull during the POC or testing, when a lot of changes h
 
 .. code-block::
 
-  ansible-playbook -i inventory.yml playbook_cleanup.yml 
+  ansible-playbook -i ../inventory.yml playbook_cleanup.yml 
 
 playbook_output.yml
 -------------------
@@ -1327,7 +1111,7 @@ List of **show commands** is build based on ``templates/leaf_show_command.j2`` a
 
 .. code-block::
 
-  ansible-playbook -i inventory.yml playbook_output.yml
+  ansible-playbook -i ../inventory.yml playbook_output.yml
 
 List of commands to collect:
 
