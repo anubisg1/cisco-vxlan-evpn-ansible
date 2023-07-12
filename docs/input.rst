@@ -520,7 +520,7 @@ In this section, the configurations of the underlay interfaces are defined.
 
 **type** / :orange:`optional`                   This option defines what type of interface is being configured.
 
-                                                |When not defined, it defaults to **physical**
+                                                | When not defined, it defaults to **physical**
 
                                                  **Choices:**
 
