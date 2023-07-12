@@ -524,13 +524,13 @@ In this section, the configurations of the underlay interfaces are defined.
 
                                                 **Choices:**
 
-                                                  * physical
+                                                 * physical
 
-                                                  * loopback
+                                                 * loopback
 
-                                                  * master
+                                                 * master
 
-                                                  * slave
+                                                 * slave
 
 **etherchannel_number** / :red:`mandatory`      This option defines what port-channel (master) the interface belongs to.
 
