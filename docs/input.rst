@@ -557,8 +557,8 @@ In this section, the configurations of the overlay interfaces are defined.
         description: 'UNIQUE-LOOPBACK-VRF-TEST'
         ip_address: '10.1.10.11'
         subnet_mask: '255.255.255.255'
-        loopback: 'yes'
         vrf: 'test'
+        loopback: 'yes'
 
     <...snip...>
 
@@ -579,37 +579,244 @@ In this section, the configurations of the overlay interfaces are defined.
 **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
 **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
+
+**vrf** / :red:`mandatory`                      This option defines the vrf to be associated with the interface.
+
+**loopback** / :red:`optional`                  This option defines interface is a loopback. Defaults to ``no``
 =============================================== ==========================================================================
 
 access_intf/<node_name>.yml
-=========================
+===========================
 
 The file ``<node_name>.yml`` contains configurations, related to access and trunk ports, related to a node.
 
 Let us review the configuration in ``<node_name>.yml``.
 
-Access interfaces section
--------------------------
+Trunk configuration
+-------------------
 
-This section defines the hostname of a node.
+Vlans to be assigned to an interace are taken from the following in increasing **order of priority (3 > 2 > 1).**
+
+.. note::
+
+    **Trunk configuration order of priority (3 > 2 > 1)**
+ 
+1. ``vlans`` in ``group_vars/overlay_db.yml`` (for ``playbook_access_add_commit/preview.yml``) or ``access_intf_cli`` in ``host_vars/inc_vars/<hostname>.yml`` 
+
+(for ``playbook_access_incremental_commit/preview.yml``)
+ 
+.. code-block:: yaml
+    
+    access_interfaces:              
+      trunks:                       
+        - GigabitEthernet1/0/6     
+
+    <...snip...>
+
+
+2. ``trunk_vlan_list`` in ``access_interfaces`` dictionary
+
+.. code-block:: yaml
+    
+    access_interfaces:                
+      trunk_vlan_list: 101,102,201     
+      trunks:                         
+        - GigabitEthernet1/0/6       
+    
+    <...snip...>
+
+3. ``trunk_vlan_list`` in specific interface dictionary
+
+.. code-block:: yaml
+
+    access_interfaces:                 
+      trunks:                          
+        - GigabitEthernet1/0/6:        
+          trunk_vlan_list: 101,102   
+    
+    <...snip...>
+
+
+Access configuration
+--------------------
+
+Vlan to be assigned to an interace are taken from the following in increasing **order of priority (2 > 1).**
+
+.. note::
+
+    **Access configuration order of priority (2 > 1)**
+
+1. ``access_vlan`` in ``access_interfaces`` dictionary
+
+.. code-block:: yaml
+
+    access_interfaces:               
+        access_vlan: 101 
+        access:                        
+            - GigabitEthernet1/0/6       
+        
+    <...snip...>
+    
+
+2. ``access_vlan`` in specific interface dictionary
+
+.. code-block:: yaml
+
+    access_interfaces:               
+      access:                        
+        - GigabitEthernet1/0/6:      
+          access_vlan: 102         
+
+    <...snip...>
+
+
+
+Examples
+--------
+
+There is an assumption, that in ``group_vars/overlay_db.yml`` defined next vlans: :green:`101,102,201,202`
+
+Example 1
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
+
+.. code-block:: yaml
+
+    access_interfaces:
+      trunks:
+        - GigabitEthernet1/0/7
+        - GigabitEthernet1/0/8
+
+Vlans assigned after execution:
+
+**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
+
+**GigabitEthernet1/0/8** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
+
+Example 2
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
+
+.. code-block:: yaml
+
+    access_interfaces:
+      access_vlan: 202
+      access:
+        - GigabitEthernet1/0/7
+        - GigabitEthernet1/0/8
+
+Vlans assigned after execution:
+
+**GigabitEthernet1/0/7** - :green:`202`
+
+**GigabitEthernet1/0/8** - :green:`202`
+
+Example 3
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
 
 .. code-block:: yaml
 
     access_interfaces:
       trunks:
         - GigabitEthernet1/0/6
-      access:
         - GigabitEthernet1/0/7:
-            access_vlan: 102
+          trunk_vlan_list: 101,102,201
+      access:
+        - GigabitEthernet1/0/8
+        - GigabitEthernet1/0/9
+      access_vlan: 202
 
-    <...snip...>
+Vlans assigned after execution:
 
+**GigabitEthernet1/0/6** - :green:`101,102,201,202` (from ``all.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
 
-.. table::
-    :widths: auto
+**GigabitEthernet1/0/7** - :green:`101,102,201`
 
-=============================================== ==========================================================================
-**Parameter**                                                            **Comments**
-=============================================== ==========================================================================
-**access_interfaces** / :orange:`optional`      This option defines the access_interfaces section.
-=============================================== ==========================================================================
+**GigabitEthernet1/0/8** - :green:`202`
+
+**GigabitEthernet1/0/9** - :green:`202`
+
+Example 4
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
+
+.. code-block:: yaml
+
+    access_interfaces:
+      trunks:
+        - GigabitEthernet1/0/6
+        - GigabitEthernet1/0/7:
+          trunk_vlan_list: 101,102,201
+      trunk_vlan_list: 101,201
+      access:
+        - GigabitEthernet1/0/8
+        - GigabitEthernet1/0/9:
+          access_vlan: 102
+      access_vlan: 202
+
+Vlans assigned after execution:
+
+**GigabitEthernet1/0/6** - :green:`101,201`
+
+**GigabitEthernet1/0/7** - :green:`101,102,201`
+
+**GigabitEthernet1/0/8** - :green:`202`
+
+**GigabitEthernet1/0/9** - :green:`102`
+
+Example 5
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
+
+.. code-block:: yaml
+
+    access_interfaces:
+      trunks:
+        - GigabitEthernet1/0/5
+        - GigabitEthernet1/0/6:
+          trunk_vlan_list: 101,102,201
+        - GigabitEthernet1/0/7
+      access:
+        - GigabitEthernet1/0/8:
+          access_vlan: 201
+        - GigabitEthernet1/0/9:
+          access_vlan: 102
+      access_vlan: 202
+
+Vlans assigned after execution:
+
+**GigabitEthernet1/0/5** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
+
+**GigabitEthernet1/0/6** - :green:`101,102,201`
+
+**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
+
+**GigabitEthernet1/0/8** - :green:`201`
+
+**GigabitEthernet1/0/9** - :green:`102`
+
+Example 6
+^^^^^^^^^
+
+Content of ``host_vars/access_intf/<hostname>.yml``
+
+.. code-block:: yaml
+
+    access_interfaces:
+      trunks:
+        - GigabitEthernet1/0/7
+    access:
+        - GigabitEthernet1/0/8:
+          access_vlan: 201
+
+Vlans assigned after execution:
+
+**GigabitEthernet1/0/7** - :green:`101,102,201,202` (from ``group_vars/overlay_db.yml`` or ``host_vars/inc_vars/<hostname>.yml``)
+
+**GigabitEthernet1/0/8** - :green:`201`
