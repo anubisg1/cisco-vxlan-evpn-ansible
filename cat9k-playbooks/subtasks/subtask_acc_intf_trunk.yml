@@ -37,7 +37,7 @@
             when: counter is not defined
             include_tasks: ../subtasks/subtask_get_vlans.yml
 
-          - ansible.builtin.set_fact: 
+          - ansible.builtin.set_fact:
               vlan_id_common: "{{ vlan_id_all }}"
 
   - name: Loop through interfaces

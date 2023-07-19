@@ -88,7 +88,7 @@
 
             - name: Populate svi dictionary with show run nve output
               ansible.builtin.set_fact:
-                svis: "{{ svis | combine ({ item.value.vrf : svis[item.value.vrf]+[item.key] }) }}"
+                svis: "{{ svis | combine ({ item.value.vrf : svis[item.value.vrf] + [item.key] }) }}"
               with_dict: "{{ overlay_dict.svis }}"
               when: item.value.vrf in all_vrfs and item.value.svi_type == 'access'
 

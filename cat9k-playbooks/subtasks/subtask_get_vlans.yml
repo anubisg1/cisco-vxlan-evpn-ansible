@@ -10,8 +10,8 @@
           vlan_id_all: []
 
       - ansible.builtin.set_fact:
-          vlan_id_all: "{{ vlan_id_all + [ item ] }}"
-         #when: overlay_data['vlans'][item]['type'] == 'access'
+          vlan_id_all: "{{ vlan_id_all + [item] }}"
+        # when: overlay_data['vlans'][item]['type'] == 'access'
         loop: "{{ overlay_data.vlans.keys() }}"
 
       - ansible.builtin.set_fact:
