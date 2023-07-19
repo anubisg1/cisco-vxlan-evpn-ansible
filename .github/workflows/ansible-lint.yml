@@ -11,4 +11,4 @@ jobs:
          python -m pip install --upgrade pip
          pip install -r requirements.txt
      - name: Lint playbook
-       uses: ansible/ansible-lint@main cat9k-playbooks/*.yml
+       uses: ansible/ansible-lint@main
