@@ -1,42 +1,41 @@
 ---
-
 - name: Clean up the config
   hosts: all
   gather_facts: false
   connection: network_cli
-  
-  tasks:  
-          - name: DESTRUCTIVE OPERATION LAB ONLY
-            pause:
-              prompt: Please confirm you want to COMPLETELY ERASE THE SWITCHES CONFIGURATION! Press return to continue. Press Ctrl+c and then "a" to abort
 
-          - name: replace base config
-            when: inventory_hostname in groups['leaf']
-            timeout: 30
-            ios_command:
-                commands:
-                  - command: "delete bootflash:vlan.dat\n"
-                    prompt:
-                      - 'Delete filename \[vlan.dat\]\?'
-                      - 'Delete flash\:/vlan.dat\? \[confirm\]'
-                    answer:
-                      - "\r"
-                      - "\r"
-                  - command: "copy default_config.txt startup-config\n"
-                    prompt: 'Destination filename \[startup-config\]\? '
-                    answer: "\r"
-                  - command: "reload\n"
-                    prompt: 'Proceed with reload? \[confirm\]'
-                    answer: "\r"
+  tasks:
+    - name: DESTRUCTIVE OPERATION LAB ONLY
+      ansible.builtin.pause:
+        prompt: Please confirm you want to COMPLETELY ERASE THE SWITCHES CONFIGURATION! Press return to continue. Press Ctrl+c and then "a" to abort
 
-          - name: replace base config
-            when: inventory_hostname in groups['spine']
-            timeout: 30
-            ios_command:
-                commands: 
-                  - command: "copy default_config.txt startup-config\n"
-                    prompt: 'Destination filename \[startup-config\]\? '
-                    answer: "\r"
-                  - command: "reload\n"
-                    prompt: 'Proceed with reload? \[confirm\]'
-                    answer: "\r"
+    - name: Replace base config
+      when: inventory_hostname in groups['leaf']
+      timeout: 30
+      cisco.ios.ios_command:
+        commands:
+          - command: "delete bootflash:vlan.dat\n"
+            prompt:
+              - 'Delete filename \[vlan.dat\]\?'
+              - 'Delete flash\:/vlan.dat\? \[confirm\]'
+            answer:
+              - "\r"
+              - "\r"
+          - command: "copy default_config.txt startup-config\n"
+            prompt: 'Destination filename \[startup-config\]\? '
+            answer: "\r"
+          - command: "reload\n"
+            prompt: 'Proceed with reload? \[confirm\]'
+            answer: "\r"
+
+    - name: Replace base config
+      when: inventory_hostname in groups['spine']
+      timeout: 30
+      cisco.ios.ios_command:
+        commands:
+          - command: "copy default_config.txt startup-config\n"
+            prompt: 'Destination filename \[startup-config\]\? '
+            answer: "\r"
+          - command: "reload\n"
+            prompt: 'Proceed with reload? \[confirm\]'
+            answer: "\r"
