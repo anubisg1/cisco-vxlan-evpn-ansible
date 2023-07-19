@@ -1,10 +1,14 @@
 # .github/workflows/ansible-lint.yml
 name: ansible-lint
-on: [push]
+on: [push, pull_request]
 jobs:
   build:
     name: Ansible Lint # Naming the build is important to use it as a status check
     runs-on: ubuntu-latest
     steps:
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint@main # or version tag instead of 'main'
+     - name: Install dependencies
+       run: |
+         python -m pip install --upgrade pip
+         pip install -r requirements.txt
+     - name: Lint playbook
+       uses: ansible/ansible-lint@main cat9k-playbooks/*.yml
