@@ -33,10 +33,10 @@
     - name: Load and process underlay input file # noqa: run-once[task]
       run_once: true
       block:
-      - name: Set underlay vars input file path if not already set
-        when: input_vars_path is not defined
-        ansible.builtin.set_fact:
-          input_vars_path: "../"
+        - name: Set underlay vars input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
 
     - name: Load vars from node_vars/<host>.yml input file
       ansible.builtin.include_vars:
