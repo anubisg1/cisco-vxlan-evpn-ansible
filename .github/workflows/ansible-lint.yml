@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - name: Install Python dependencies
-       uses: py-actions/py-dependency-install@v4
+       uses: py-actions/py-dependency-install@main
      - name: Lint playbook
        uses: ansible/ansible-lint@main
