@@ -24,3 +24,10 @@ overlay_interfaces:
     subnet_mask: '255.255.255.255'
     loopback: 'yes'
     vrf: 'test'
+
+  Loopback101:
+    description: 'UNIQUE-LOOPBACK-VRF-TEST2'
+    ip_address: '10.1.11.11'
+    subnet_mask: '255.255.255.255'
+    loopback: 'yes'
+    vrf: 'test2'
