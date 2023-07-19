@@ -48,7 +48,7 @@
 
     - name: Render template files output
       ansible.builtin.set_fact:
-        rendered: "{{  overlay_block | regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') | regex_replace('\\n(\\s+)','\n') | regex_replace('! ','\n\n! ') }}"
+        rendered: "{{ overlay_block | regex_replace('#jinja2: lstrip_blocks: \"True\", trim_blocks: \"True\"', '') | regex_replace('\\n(\\s+)','\n') | regex_replace('! ','\n\n! ') }}"
 
     - name: Copy configurations to respective file ( <hostname>-overlay.txt ) under 'preview_files' folder
       ansible.builtin.copy:
