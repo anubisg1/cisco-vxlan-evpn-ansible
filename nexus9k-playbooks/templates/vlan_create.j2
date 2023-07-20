@@ -1,0 +1,55 @@
+{#
+This module is configuring, deleting or modifing vlan configuration.
+If action is not set in the configurations, it is "add" by default.
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{% if vlans is defined %}
+  {% for vlan in vlans %}
+    {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
+      {# Checking an action for the vlan - action_vlan. #}
+      {% set action = vlans[vlan].action | default ('add') %}
+      {% if vlans[vlan].pvlan is defined %}
+        {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+      {% endif %}
+      {% if action == 'delete' %}
+        !
+        no vlan {{vlan}}
+        no vlan configuration {{vlan}}
+      {% elif action == 'add' %}
+        !
+        vlan {{vlan}}
+        {% if vlans[vlan].description is defined %}
+          name {{ vlans[vlan].description }}
+        {% endif %}
+        {% if vlans[vlan].pvlan is defined %}
+          {% if type == 'primary' %}
+            private-vlan primary
+          {% elif type == 'isolated' %}
+            private-vlan isolated
+          {% elif type == 'community' %}
+            private-vlan community
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {# vlans must exist and of the correct type before associating them #}
+  {% for vlan in vlans %}
+    {% if ( (vlan_cli is defined and vlan in vlan_cli) or (vlan_cli is not defined) ) %}
+      {% set action = vlans[vlan].action | default ('add') %}
+      {% if vlans[vlan].pvlan is defined %}
+        {% set type = vlans[vlan].pvlan.type | default ('normal') %}
+        {% if action == 'add' %}
+          {% if type == 'isolated' or type == 'community' %}
+            vlan {{ vlans[vlan].pvlan.primary }}
+              private-vlan association add {{ vlan }} 
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+{% endif %}

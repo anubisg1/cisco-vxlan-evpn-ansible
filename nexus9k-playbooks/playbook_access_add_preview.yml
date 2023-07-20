@@ -1,0 +1,81 @@
+---
+- name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
+  hosts: leaf
+  gather_facts: false
+  vars:
+    playbook_mode: add
+    info_dict:
+      access:
+        key_name: 'access_vlan'
+      trunks:
+        key_name: 'trunk_vlan_list'
+
+  tasks:
+    - name: Check playbook mode # noqa: run-once[task]
+      run_once: true
+      when: incremental is defined
+      ansible.builtin.set_fact:
+        playbook_mode: inc
+
+    - name: Clear variable from previous run
+      ansible.builtin.set_fact:
+        intf_conf: []
+
+    - name: Set access interface input folder path if not already set
+      when: input_vars_path is not defined
+      ansible.builtin.set_fact:
+        input_vars_path: "../"
+
+    - name: Load variables from access interface input file if present
+      block:
+        - name: Check whether host_vars/access_intf/<hostname>.yml is present
+          delegate_to: localhost
+          ansible.builtin.stat:
+            path: ="{{ input_vars_path }}host_vars/access_intf/{{ inventory_hostname }}.yml"
+          register: file_state
+          become: false
+
+        - name: Load variables from host_vars/access_intf/<hostname>.yml if present
+          ansible.builtin.include_vars:
+            file: "{{ input_vars_path }}host_vars/access_intf/{{ inventory_hostname }}.yml"
+            name: get_Leaf_vars
+          when: file_state.stat.exists
+
+    # Following tasks are skippped if host_vars/access_intf/<hostname>.yml is not present
+    - name: Process interfaces
+      when: (get_Leaf_vars is defined) and (get_Leaf_vars.access_interfaces is defined)
+      block:
+        - name: Set gather_factsFacts
+          ansible.builtin.set_fact:
+            execute_task: "./subtasks/subtask_acc_intf_preview.yml"
+
+        - name: Process trunk interfaces
+          when: get_Leaf_vars.access_interfaces.trunks is defined
+          ansible.builtin.include_tasks: ./subtasks/subtask_acc_intf_trunk.yml
+
+        - name: Process access interfaces
+          when: get_Leaf_vars.access_interfaces.access is defined
+          ansible.builtin.include_tasks: ./subtasks/subtask_acc_intf_access.yml
+
+        - name: Copy configurations to respective file ( <inventory_hostname>-{add/inc}-intf.txt ) under 'preview_files' folder
+          ansible.builtin.copy:
+            mode: preserve
+            dest: preview_files/{{ inventory_hostname }}-{{ playbook_mode }}-intf.txt
+            content: "\n! access interface block \n{{ intf_conf | join('\n') }}"
+
+- name: Display output file info # noqa: run-once[task]
+  hosts: localhost
+  gather_facts: false
+  run_once: true
+  vars:
+    playbook_mode: add
+
+  tasks:
+    - name: Check playbook mode
+      when: incremental is defined
+      ansible.builtin.set_fact:
+        playbook_mode: inc
+
+    - name: Print output
+      ansible.builtin.debug:
+        msg: Please refer to <hostname>-{{ playbook_mode }}-intf.txt in 'preview_files' folder

@@ -1,0 +1,27 @@
+{#
+This module is configuring, deleting or modifing vlan configuration.
+If action is not set in the configurations, it is "add" by default.
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+{% if vrfs is defined %}
+  {% for vrf in vrfs %}
+    {% if ( (vrf_cli is defined and vrf in vrf_cli) or (vrf_cli is not defined) ) %}
+      {# Checking an action for all vrf #}
+      {% set action = vrfs[vrf].action | default ('add') %}
+      {% if action == 'delete' %}
+        !
+        no vlan {{vrfs[vrf].vlan}}
+        no vlan configuration {{vrfs[vrf].vlan}}
+      {% elif action == 'add' %}
+        !
+        vlan {{vrfs[vrf].vlan}}
+        {% if vrfs[vrf].description is defined %}
+          name {{ vrfs[vrf].description }}
+        {% endif %}
+      {% endif %}
+
+    {% endif %}
+  {% endfor %}
+{% endif %}

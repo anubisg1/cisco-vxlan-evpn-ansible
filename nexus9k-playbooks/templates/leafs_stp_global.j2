@@ -1,0 +1,17 @@
+{#
+This module is configuring hostname for a swith
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+!
+spanning-tree mode rapid-pvst
+spanning-tree loopguard default
+spanning-tree logging
+spanning-tree portfast default
+spanning-tree portfast bpduguard default
+spanning-tree extend system-id
+
+{% if stp.priority is defined %}
+    spanning-tree vlan 1-4093 priority {{ stp.priority }}
+{% endif %}

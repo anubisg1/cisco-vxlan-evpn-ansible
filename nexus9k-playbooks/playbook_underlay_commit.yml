@@ -1,0 +1,88 @@
+---
+- name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
+  hosts: all
+  gather_facts: false
+  connection: network_cli
+  vars:
+    save_configuration: true
+
+  tasks:
+    # Set db file path and load underlay vars
+    - name: Load and process underlay input file # noqa: run-once[task]
+      run_once: true
+      block:
+        - name: Set underlay vars input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
+
+    - name: Load vars from node_vars/<host>.yml input file
+      ansible.builtin.include_vars:
+        file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
+
+    - name: Load vars from underlay input file
+      ansible.builtin.include_vars:
+        file: "{{ input_vars_path }}group_vars/underlay_db.yml"
+
+    - name: Configure hostnames
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/hostname.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Enable Unicast Routing
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/global_routing.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure STP details
+      when: inventory_hostname in groups['leaf']
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/leafs_stp_global.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure underlay interfaces
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/underlay_interfaces.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure OSPF
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/ospf_interfaces.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure BGP Process on spines
+      when: inventory_hostname in groups['spine']
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/bgp_global_spines.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure BGP Process on Leafs
+      when: inventory_hostname in groups['leaf']
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/bgp_global_leafs.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Configure VTEP
+      when: inventory_hostname in groups['leaf']
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/l2vpn_evpn_global.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Pause for 60 seconds for convergence
+      ansible.builtin.wait_for:
+        delay: 60
+        timeout: 0
+
+    - name: Save the configurations in the device
+      when: save_configuration
+      ansible.netcommon.cli_command:
+        command: write mem
+      register: result
