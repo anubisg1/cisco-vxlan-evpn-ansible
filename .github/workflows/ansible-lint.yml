@@ -13,7 +13,7 @@ jobs:
      - name: Install ansible collections required
        run: |
          ansible-galaxy collection install ansible.utils ansible.netcommon ansible.posix cisco.ios
-     - name: Lint playbook
+     - name: Run Ansible-Lint on playbooks
        run: |
          pip install ansible-lint
          ansible-lint cat9k-playbooks/*.yml
