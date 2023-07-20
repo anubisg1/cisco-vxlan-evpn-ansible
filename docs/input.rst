@@ -443,14 +443,14 @@ In this file inforrmation about DHCP configuration is stored.
 .. code-block:: yaml
 
    dhcp:
-        dhcp_options:
-            option_82_link_selection_standard: standard
-            option_82_server_id_override: standard
+     dhcp_options:
+       option_82_link_selection_standard: standard
+       option_82_server_id_override: standard
     
-        vrfs:
-            all:                   
-                helper_address: 
-                    - 10.1.1.1
+     vrfs:
+       all:                   
+         helper_address: 
+           - 10.1.1.1
 
 .. table::
    :widths: auto
