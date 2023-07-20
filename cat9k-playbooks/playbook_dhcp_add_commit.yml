@@ -24,7 +24,8 @@
           register: dhcp_config_info
 
         - name: Check for any error msg from python module for relay source interface processing
-          when: dhcp_config_info['dhcp_ret_dict']['global_src_err'] != False
+          when: dhcp_config_info['dhcp_ret_dict']['global_src_err']
+          # when: dhcp_config_info['dhcp_ret_dict']['global_src_err'] != False
           ansible.builtin.fail:
             msg: "Relay source interface for '{{ dhcp_config_info['dhcp_ret_dict']['global_src_err'] }}' is not defined in group_vars/dhcp_vars.yml"
           any_errors_fatal: true
@@ -105,7 +106,8 @@
           register: ovrly_intf_output
 
         - name: Check for any error msg from python module for relay source interface processing
-          when: ovrly_intf_output['dhcp_ret_dict']['intf_err'] != False
+          when: ovrly_intf_output['dhcp_ret_dict']['intf_err']
+          # when: ovrly_intf_output['dhcp_ret_dict']['intf_err'] != False
           ansible.builtin.fail:
             msg: "Relay source interface for {{ ovrly_intf_output['dhcp_ret_dict']['intf_err'] }} is not defined and cannot be found in hostvars/{{ inventory_hostname }}.yml"
           any_errors_fatal: true

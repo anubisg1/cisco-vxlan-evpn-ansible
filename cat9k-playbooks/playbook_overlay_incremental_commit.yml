@@ -40,12 +40,12 @@
       ansible.builtin.include_vars:
         file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
 
-    - name: Check whether host_vars/inc_vars/{{ inventory_hostname }}.yml is present
+    - name: Check whether host_vars/inc_vars/<inventory_hostname>.yml is present
       local_action: stat path=../host_vars/inc_vars/{{ inventory_hostname }}.yml
       register: file_state
       become: false
 
-    - name: Executing tasks if host_vars/inc_vars/{{ inventory_hostname }}.yml is present
+    - name: Executing tasks if host_vars/inc_vars/<inventory_hostname>.yml is present
       when: file_state.stat.exists and inventory_hostname in groups['leaf']
       block:
         - name: Load variables from files under host_vars/inc_vars folder
@@ -58,7 +58,7 @@
       when: (vrf_cli is defined) or (vlan_cli is defined) or (svi_cli is defined) or (ovrl_intf_cli is defined)
 
     - name: VRF configuration
-      when: (inventory_hostname in groups['leaf']) and ((incremental_run == true and vrf_cli is defined))
+      when: (inventory_hostname in groups['leaf']) and ((incremental_run and vrf_cli is defined))
       ansible.netcommon.cli_config:
         config: " {{ lookup('template', item.key) }} "
         diff_match: none
@@ -66,7 +66,7 @@
       with_dict: "{{ vrf_dict }}"
 
     - name: VLAN configuration
-      when: (inventory_hostname in groups['leaf']) and ((incremental_run == true and vlan_cli is defined))
+      when: (inventory_hostname in groups['leaf']) and ((incremental_run and vlan_cli is defined))
       ansible.netcommon.cli_config:
         config: " {{ lookup('template', item.key) }} "
         diff_match: none
@@ -74,7 +74,7 @@
       with_dict: "{{ vlan_dict }}"
 
     - name: SVI configuration
-      when: (inventory_hostname in groups['leaf']) and ((incremental_run == true and svi_cli is defined))
+      when: (inventory_hostname in groups['leaf']) and ((incremental_run and svi_cli is defined))
       ansible.netcommon.cli_config:
         config: " {{ lookup('template', item.key) }} "
         diff_match: none
@@ -82,7 +82,7 @@
       with_dict: "{{ svi_dict }}"
 
     - name: Overlay interface configuration
-      when: (inventory_hostname in groups['leaf']) and ((incremental_run == true and ovrl_intf_cli is defined))
+      when: (inventory_hostname in groups['leaf']) and ((incremental_run and ovrl_intf_cli is defined))
       ansible.netcommon.cli_config:
         config: " {{ lookup('template', item.key) }} "
         diff_match: none
@@ -93,4 +93,4 @@
       ansible.builtin.wait_for:
         delay: 60
         timeout: 0
-      when: incremental_run == false
+      when: not incremental_run

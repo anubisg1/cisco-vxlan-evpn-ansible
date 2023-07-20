@@ -1,5 +1,4 @@
 ---
-
 - name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
   hosts: leaf
   gather_facts: false
@@ -62,7 +61,7 @@
             dest: preview_files/{{ inventory_hostname }}-{{ playbook_mode }}-intf.txt
             content: "\n! access interface block \n{{ intf_conf | join('\n') }}"
 
-- name: Display output file info
+- name: Display output file info # noqa: run-once[task]
   hosts: localhost
   gather_facts: false
   run_once: true

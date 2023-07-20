@@ -1,18 +1,21 @@
-  - name: Collect vars from overlay_db input file
-    run_once: true
-    ansible.builtin.include_vars:
-      file: "{{ input_vars_path }}group_vars/overlay_db.yml"
-      name: overlay_data
+- name: Collect vars from overlay_db input file # noqa: run-once[task]
+  run_once: true
+  ansible.builtin.include_vars:
+    file: "{{ input_vars_path }}group_vars/overlay_db.yml"
+    name: overlay_data
 
-  - name: Get vlans
-    block:
-      - ansible.builtin.set_fact:
-          vlan_id_all: []
+- name: Get vlans
+  block:
+    - name: Loading data details
+      ansible.builtin.set_fact:
+        vlan_id_all: []
 
-      - ansible.builtin.set_fact:
-          vlan_id_all: "{{ vlan_id_all + [item] }}"
-        # when: overlay_data['vlans'][item]['type'] == 'access'
-        loop: "{{ overlay_data.vlans.keys() }}"
+    - name: Loading data details
+      ansible.builtin.set_fact:
+        vlan_id_all: "{{ vlan_id_all + [item] }}"
+      # when: overlay_data['vlans'][item]['type'] == 'access'
+      loop: "{{ overlay_data.vlans.keys() }}"
 
-      - ansible.builtin.set_fact:
-          counter: 1
+    - name: Loading data details
+      ansible.builtin.set_fact:
+        counter: 1

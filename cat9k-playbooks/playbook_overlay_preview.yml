@@ -1,5 +1,4 @@
 ---
-
 - name: Automated VXLAN deployment with BGP EVPN L2/L3 underlay w/ Spine
   hosts: all
   gather_facts: false

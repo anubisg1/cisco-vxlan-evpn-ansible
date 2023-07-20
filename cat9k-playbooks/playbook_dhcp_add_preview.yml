@@ -24,7 +24,8 @@
           register: dhcp_config_info
 
         - name: Check for any error msg from python module for relay source interface processing
-          when: dhcp_config_info['dhcp_ret_dict']['global_src_err'] != False
+          # when: dhcp_config_info['dhcp_ret_dict']['global_src_err'] != False
+          when: dhcp_config_info['dhcp_ret_dict']['global_src_err']
           ansible.builtin.fail:
             msg: "Relay source interface for '{{ dhcp_config_info['dhcp_ret_dict']['global_src_err'] }}' is not defined in group_vars/dhcp_vars.yml"
           any_errors_fatal: true
@@ -88,7 +89,7 @@
 
             - name: Populate svi dictionary with show run nve output
               ansible.builtin.set_fact:
-                svis: "{{ svis | combine ({ item.value.vrf : svis[item.value.vrf] + [item.key] }) }}"
+                svis: "{{ svis | combine({item.value.vrf: svis[item.value.vrf] + [item.key]}) }}"
               with_dict: "{{ overlay_dict.svis }}"
               when: item.value.vrf in all_vrfs and item.value.svi_type == 'access'
 
@@ -101,13 +102,14 @@
       block:
         - name: Call python module to assign relay src interface from host_vars/node_vars/<inventory>.yml for VRFs if not defined already
           dhcp_src_addr_info:
-            ovrly_intf_info: "{{ ovrly_intf_info | default({}) | combine ( {'all_vrfs': all_vrfs}, {'overlay_intf': host_vars_vars['overlay_interfaces']}, {'no_src_vrf': dhcp_src_dict['no_src_vrf']} ) }}"
+            ovrly_intf_info: "{{ ovrly_intf_info | default({}) | combine({'all_vrfs': all_vrfs}, {'overlay_intf': host_vars_vars['overlay_interfaces']}, {'no_src_vrf': dhcp_src_dict['no_src_vrf']}) }}"
           register: ovrly_intf_output
 
         - name: Check for any error msg from python module for relay source interface processing
-          when: ovrly_intf_output['dhcp_ret_dict']['intf_err'] != False
+          when: ovrly_intf_output['dhcp_ret_dict']['intf_err']
+          # when: ovrly_intf_output['dhcp_ret_dict']['intf_err'] != False
           ansible.builtin.fail:
-            msg: "Relay source interface for {{ ovrly_intf_output['dhcp_ret_dict']['intf_err'] }} is not defined and cannot be found in hostvars/{{inventory_hostname}}.yml"
+            msg: "Relay source interface for {{ ovrly_intf_output['dhcp_ret_dict']['intf_err'] }} is not defined and cannot be found in hostvars/{{ inventory_hostname }}.yml"
           any_errors_fatal: true
 
         - name: Set facts after analysis
