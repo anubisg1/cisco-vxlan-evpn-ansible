@@ -35,10 +35,9 @@
 # ______________________________________________
 
 vrfs:
-   - all
+  - all
 
 vlans:
-   - all
+  - all
 
 update_access: true
-
