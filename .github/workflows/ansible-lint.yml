@@ -14,6 +14,6 @@ jobs:
        run: |
          ansible-galaxy collection install ansible.utils ansible.netcommon ansible.posix cisco.ios
      - name: Lint playbook
-       uses: ansible/ansible-lint@main
-       with:
-         targets: "cat9k-playbooks"
+       run: |
+         pip install ansible-lint
+         ansible-lint cat9k-playbooks/*.yml
