@@ -16,7 +16,9 @@
         - name: Load variables from access interface input file if present
           block:
             - name: Check whether host_vars/inc_vars/<hostname>.yml" is present
-              local_action: stat path="{{ input_vars_path }}host_vars/inc_vars/{{ inventory_hostname }}.yml"
+              delegate_to: localhost
+              ansible.builtin.stat:
+                path: "{{ input_vars_path }}host_vars/inc_vars/{{ inventory_hostname }}.yml"
               register: file_state
               become: false
 

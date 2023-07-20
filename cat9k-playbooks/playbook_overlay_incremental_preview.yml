@@ -43,7 +43,9 @@
         file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
 
     - name: Check whether host_vars/inc_vars/<inventory_hostname>.yml is present
-      local_action: stat path=../host_vars/inc_vars/{{ inventory_hostname }}.yml
+      delegate_to: localhost
+      ansible.builtin.stat:
+        path: ../host_vars/inc_vars/{{ inventory_hostname }}.yml
       register: file_state
       become: false
 
