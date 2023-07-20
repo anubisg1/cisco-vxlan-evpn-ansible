@@ -1,0 +1,5 @@
+cat9k-playbooks/playbook_underlay_preview.yml yaml[line-length] # breaks jinja
+cat9k-playbooks/playbook_overlay_preview.yml yaml[line-length] # breaks jinja
+cat9k-playbooks/playbook_overlay_incremental_preview.yml yaml[line-length] # breaks jinja
+cat9k-playbooks/playbook_dhcp_add_preview.yml yaml[line-length] # breaks jinja
+cat9k-playbooks/playbook_dhcp_add_commit.yml yaml[line-length] # breaks jinja
