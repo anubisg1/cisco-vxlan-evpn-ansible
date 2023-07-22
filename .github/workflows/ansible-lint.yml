@@ -17,3 +17,5 @@ jobs:
        run: |
          pip install ansible-lint
          ansible-lint cat9k-playbooks/*.yml
+         ansible-lint nexus9k-playbooks/*.yml
+         ansible-lint common-playbooks/*.yml
