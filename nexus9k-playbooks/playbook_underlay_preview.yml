@@ -5,6 +5,7 @@
   vars:
     underlay_block: ""
     underlay_dict_global:
+      './templates/nxos_features.j2': 'nxos features block'
       './templates/hostname.j2': 'hostname block'
       './templates/global_routing.j2': 'global routing block'
       './templates/underlay_interfaces.j2': 'underlay interface block'
