@@ -24,6 +24,17 @@
       ansible.builtin.include_vars:
         file: "{{ input_vars_path }}group_vars/underlay_db.yml"
 
+    - name: Enable all the features
+      ansible.netcommon.cli_config:
+        config: "{{ lookup('template', './templates/nxos_features.j2') }}"
+        diff_match: none
+      register: result
+
+    - name: Pause for 60 seconds for convergence
+      ansible.builtin.wait_for:
+        delay: 60
+        timeout: 0
+
     - name: Configure hostnames
       ansible.netcommon.cli_config:
         config: "{{ lookup('template', './templates/hostname.j2') }}"

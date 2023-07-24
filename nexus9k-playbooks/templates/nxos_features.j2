@@ -1,0 +1,20 @@
+{#
+This module is enabling nx-os features for a swith
+#}
+
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+
+!
+
+cfs eth distribute
+nv overlay evpn
+feature ospf
+feature bgp
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lacp
+feature vpc
+feature lldp
+feature bfd
+feature nv overlay
+feature ngoam
