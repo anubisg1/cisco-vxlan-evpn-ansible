@@ -2,27 +2,27 @@ hostname: 'SPINE-1'
 
 underlay_interfaces:
   Loopback0:
-    name: 'ROUTER-ID'
+    description: 'ROUTER-ID'
     ip_address: '192.168.210.1'
     subnet_mask: '255.255.255.255'
     type: 'loopback'
 
   GigabitEthernet1/0/1:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
     
   GigabitEthernet1/0/2:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
 
   GigabitEthernet1/0/3:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
     type: 'slave'
     etherchannel_number: '1'
 
   GigabitEthernet1/0/4:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
     type: 'slave'
     etherchannel_number: '1'
 
   Port-channel1:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
     type: 'master'

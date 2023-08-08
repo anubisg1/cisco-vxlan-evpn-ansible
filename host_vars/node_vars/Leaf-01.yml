@@ -2,19 +2,19 @@ hostname: 'LEAF-1'
 
 underlay_interfaces:
   Loopback0:
-    name: 'ROUTER-ID'
+    description: 'ROUTER-ID'
     ip_address: '192.168.210.11'
     subnet_mask: '255.255.255.255'
     type: 'loopback'
 
   Loopback1:
-    name: 'VTEP'
+    description: 'VTEP'
     ip_address: '192.168.211.11'
     subnet_mask: '255.255.255.255'
     type: 'loopback'
 
   GigabitEthernet1/0/24:
-    name: 'UNDERLAY-FABRIC'
+    description: 'UNDERLAY-FABRIC'
 
 #layer 3 interface
 overlay_interfaces:
