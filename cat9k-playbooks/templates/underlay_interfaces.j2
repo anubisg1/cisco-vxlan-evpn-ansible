@@ -9,8 +9,8 @@ This module configures ip addresses for underlay underlay_interfaces
   interface  {{ interface }}
     {# prevents err-disabled caused by STP #}
     shutdown
-  {% if underlay_interfaces[interface].name is defined %}
-    description {{ underlay_interfaces[interface].name }}
+  {% if underlay_interfaces[interface].description is defined %}
+    description {{ underlay_interfaces[interface].description }}
   {% endif %}
   {% set type = underlay_interfaces[interface].type | default ('physical') %}
   {% if type == 'loopback'%}

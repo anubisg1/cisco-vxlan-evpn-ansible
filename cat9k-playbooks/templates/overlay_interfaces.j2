@@ -14,7 +14,9 @@ This module configures overlay interfaces
       {% if action == 'delete' -%}
         no vrf forwarding {{ overlay_interfaces[intf].vrf }}
       {% elif action == 'add' %}
-        description {{ overlay_interfaces[intf].description }}
+        {% if overlay_interfaces[intf].description is defined %}
+          description {{ overlay_interfaces[intf].description }}
+        {% endif %}
         vrf forwarding {{ overlay_interfaces[intf].vrf }}
         ip address {{ overlay_interfaces[intf].ip_address }} {{ overlay_interfaces[intf].subnet_mask }} 
       {% endif %}

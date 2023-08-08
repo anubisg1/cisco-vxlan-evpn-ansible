@@ -602,29 +602,29 @@ In this section, the configurations of the underlay interfaces are defined.
 
     underlay_interfaces:
       Loopback0:
-        name: 'ROUTER-ID'
+        description: 'ROUTER-ID'
         type: 'loopback'
         ip_address: '192.168.210.11'
         subnet_mask: '255.255.255.255'
 
       Loopback1:
-        name: 'VTEP'
+        description: 'VTEP'
         type: 'loopback'
         ip_address: '192.168.211.11'
         subnet_mask: '255.255.255.255'
 
       GigabitEthernet1/0/23:
-        name: 'UNDERLAY-FABRIC'
+        description: 'UNDERLAY-FABRIC'
         type: 'slave'
         etherchannel_number: '1'
 
       GigabitEthernet1/0/24:
-        name: 'UNDERLAY-FABRIC'
+        description: 'UNDERLAY-FABRIC'
         type: 'slave'
         etherchannel_number: '1'
 
       Port-channel1:
-        name: 'UNDERLAY-FABRIC'
+        description: 'UNDERLAY-FABRIC'
         type: 'master'
 
     <...snip...>
@@ -641,7 +641,7 @@ In this section, the configurations of the underlay interfaces are defined.
 **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
                                                 ``GigabitEthernet1/0/1``
 
-**name** / :orange:`optional`                   This option defines the interface description.
+**description** / :orange:`optional`            This option defines the interface description.
 
 **type** / :orange:`optional`                   | This option defines what type of interface is being configured.
 
@@ -699,7 +699,7 @@ In this section, the configurations of the overlay interfaces are defined.
 **<interface_name>** / :red:`mandatory`         This option defines the interface name. For example: ``Loopback0`` or
                                                 ``GigabitEthernet1/0/1``
 
-**name** / :orange:`optional`                   This option defines the interface description.
+**description** / :orange:`optional`            This option defines the interface description.
 
 **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
 
