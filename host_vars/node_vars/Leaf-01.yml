@@ -31,3 +31,20 @@ overlay_interfaces:
     subnet_mask: '255.255.255.255'
     loopback: 'yes'
     vrf: 'test2'
+
+  GigabitEthernet1/0/1:
+    description: 'Link to Router1-1/0'
+    type: 'slave'
+    etherchannel_number: '10'
+
+  GigabitEthernet1/0/2:
+    description: 'Link to Router1-1/1'
+    type: 'slave'
+    etherchannel_number: '10'
+
+  Port-channel1:
+    description: 'Link to Router1'
+    type: 'master'
+    ip_address: '10.1.21.11'
+    subnet_mask: '255.255.255.255'
+    vrf: 'test2'

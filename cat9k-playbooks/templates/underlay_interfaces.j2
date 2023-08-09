@@ -4,20 +4,20 @@ This module configures ip addresses for underlay underlay_interfaces
 
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 
-{% for interface in underlay_interfaces %}
+{% for intf in underlay_interfaces %}
   !
-  interface  {{ interface }}
+  interface  {{ intf }}
     {# prevents err-disabled caused by STP #}
     shutdown
-  {% if underlay_interfaces[interface].description is defined %}
-    description {{ underlay_interfaces[interface].description }}
+  {% if underlay_interfaces[intf].description is defined %}
+    description {{ underlay_interfaces[intf].description }}
   {% endif %}
-  {% set type = underlay_interfaces[interface].type | default ('physical') %}
-  {% if type == 'loopback'%}
-    ip address {{ underlay_interfaces[interface].ip_address }} {{ underlay_interfaces[interface].subnet_mask }}
+  {% set type = underlay_interfaces[intf].type | default ('physical') %}
+  {% if type == 'loopback' %}
+    ip address {{ underlay_interfaces[intf].ip_address }} {{ underlay_interfaces[intf].subnet_mask }}
   {% elif type == 'slave' %}
     no switchport
-    channel-group {{ underlay_interfaces[interface].etherchannel_number }} mode active
+    channel-group {{ underlay_interfaces[intf].etherchannel_number }} mode active
   {% else %}
     no switchport
     ip unnumbered {{ underlay.router_id }}

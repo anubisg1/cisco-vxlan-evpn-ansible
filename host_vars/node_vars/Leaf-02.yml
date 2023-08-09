@@ -22,12 +22,24 @@ overlay_interfaces:
     description: 'UNIQUE-LOOPBACK-VRF-TEST'
     ip_address: '10.1.10.12'
     subnet_mask: '255.255.255.255'
-    loopback: 'yes'
+    type: 'loopback'
     vrf: 'test'
 
   Loopback101:
     description: 'UNIQUE-LOOPBACK-VRF-TEST2'
     ip_address: '10.1.11.12'
     subnet_mask: '255.255.255.255'
-    loopback: 'yes'
+    type: 'loopback'
     vrf: 'test2'
+
+  GigabitEthernet1/0/1:
+    description: 'Link to Router1-1/0'
+    type: 'tagged'
+
+  GigabitEthernet1/0/1.100:
+    description: 'test'
+    type: 'subintf'
+    dot1q: '100'
+    ip_address: '10.1.31.12'
+    subnet_mask: '255.255.255.255'
+    vrf: 'test'
