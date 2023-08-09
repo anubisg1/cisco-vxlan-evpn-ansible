@@ -683,7 +683,36 @@ In this section, the configurations of the overlay interfaces are defined.
         ip_address: '10.1.10.11'
         subnet_mask: '255.255.255.255'
         vrf: 'test'
-        loopback: 'yes'
+        type: 'loopback'
+
+      GigabitEthernet1/0/1:
+        description: 'Link to Router1-1/0'
+        type: 'slave'
+        etherchannel_number: '10'
+
+      GigabitEthernet1/0/2:
+        description: 'Link to Router1-1/1'
+        type: 'slave'
+        etherchannel_number: '10'
+
+      Port-channel1:
+        description: 'Link to Router1'
+        type: 'master'
+        ip_address: '10.1.21.11'
+        subnet_mask: '255.255.255.255'
+        vrf: 'test'
+
+      GigabitEthernet1/0/3:
+        description: 'Link to Router3'
+        type: 'tagged'
+
+      GigabitEthernet1/0/3.100:
+        description: 'Link to Router3 vrf test'
+        type: 'subintf'
+        dot1q: '100'
+        ip_address: '10.1.31.12'
+        subnet_mask: '255.255.255.255'
+        vrf: 'test'
 
     <...snip...>
 
@@ -701,13 +730,43 @@ In this section, the configurations of the overlay interfaces are defined.
 
 **description** / :orange:`optional`            This option defines the interface description.
 
+**type** / :orange:`optional`                   | This option defines what type of interface is being configured.
+
+                                                | When not defined, it defaults to **physical**
+
+                                                **Choices:**
+
+                                                 * physical
+
+                                                 * tagged
+
+                                                 * subintf
+                                                 
+                                                 * loopback
+
+                                                 * master
+
+                                                 * slave
+
+**etherchannel_number** / :red:`mandatory`      This option defines what port-channel (master) the interface belongs to.
+
+                                                This field applies only if the type is **slave**
+
+**dot1q** / :red:`mandatory`                    This option defines vlan tag should be configured
+
+                                                This field applies only if the type is **subintf**
+
 **ip_address** / :red:`mandatory`               This option defines the IPv4 address on the interface.
+
+                                                This field does **NOT** apply if type is **slave** or **tagged**
 
 **subnet_mask** / :red:`mandatory`              This option defines the subnet mask for the IPv4 address.
 
+                                                This field does **NOT** apply if type is **slave** or **tagged**
+
 **vrf** / :red:`mandatory`                      This option defines the vrf to be associated with the interface.
 
-**loopback** / :red:`optional`                  This option defines interface is a loopback. Defaults to ``no``
+                                                This field does **NOT** apply if type is **slave** or **tagged**
 =============================================== ==========================================================================
 
 access_intf/<node_name>.yml

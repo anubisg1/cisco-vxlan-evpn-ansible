@@ -9,18 +9,38 @@ This module configures overlay interfaces
     {% if ((ovrl_intf_cli is defined and intf in ovrl_intf_cli) or (ovrl_intf_cli is not defined)) %}
     {# Checking an action for the vlan - action_vlan. #}
     {% set action = overlay_interfaces[intf].action | default ('add') %}
-      !
-      interface {{ intf }}
-      {% if action == 'delete' -%}
-        no vrf forwarding {{ overlay_interfaces[intf].vrf }}
+    {% set type = overlay_interfaces[intf].type | default ('physical') %}
+      {% if action == 'delete' %}
+        {% if type == 'loopback' or type == 'master' or type == 'subintf' %}
+          !
+          no interface {{ intf }}
+        {% else %}
+          !
+          interface {{ intf }}
+            no vrf forwarding {{ overlay_interfaces[intf].vrf }}
+        {% endif %}
       {% elif action == 'add' %}
+        !
+        interface {{ intf }}
         {% if overlay_interfaces[intf].description is defined %}
           description {{ overlay_interfaces[intf].description }}
         {% endif %}
-        vrf forwarding {{ overlay_interfaces[intf].vrf }}
-        ip address {{ overlay_interfaces[intf].ip_address }} {{ overlay_interfaces[intf].subnet_mask }} 
-      {% endif %}
-      no shutdown
-    {% endif %}
+        {% if type == 'physical' or type == 'slave' or type == 'master' or type == 'tagged' %}
+          no switchport
+        {% endif %}
+        {% if type == 'slave' %}
+          channel-group {{ overlay_interfaces[intf].etherchannel_number }} mode active
+        {% elif type == 'tagged' %}
+          no shutdown
+        {% else %}
+          {% if type == 'subintf' %}
+            encapsulation dot1q {{ overlay_interfaces[intf].dot1q }}
+          {% endif %}
+          vrf forwarding {{ overlay_interfaces[intf].vrf }}
+          ip address {{ overlay_interfaces[intf].ip_address }} {{ overlay_interfaces[intf].subnet_mask }} 
+          no shutdown
+        {% endif %} 
+      {% endif %} 
+    {% endif %}  
   {% endfor %}
 {% endif %}
