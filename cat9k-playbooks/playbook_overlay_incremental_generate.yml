@@ -4,9 +4,18 @@
   gather_facts: false
 
   tasks:
+      # Set db file path and load overlay_inc vars
+    - name: Load and process underlay input file # noqa: run-once[task]
+      run_once: true
+      block:
+        - name: Set underlay vars input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
+
     - name: Locate files in ../host_vars/inc_vars dir
       ansible.builtin.find:
-        path: "../host_vars/inc_vars"
+        path: "{{ input_vars_path }}host_vars/inc_vars"
       register: cleanup
       ignore_errors: true
 
@@ -21,23 +30,23 @@
     - name: Collect vars from incremental_vars.yml # noqa: run-once[task]
       run_once: true
       ansible.builtin.include_vars:
-        file: ../group_vars/create_vars.yml
+        file: "{{ input_vars_path }}group_vars/create_vars.yml"
         name: user_input
 
 #    - name: Collect vars from ../host_vars/access_intf
 #      include_vars:
-#        file: ../host_vars/access_intf/{{ inventory_hostname }}.yml
+#        file: "{{ input_vars_path }}"host_vars/access_intf/{{ inventory_hostname }}.yml"
 #        name: access_intf_input
 
     - name: Collect vars from overlay_db.yml # noqa: run-once[task]
       run_once: true
       ansible.builtin.include_vars:
-        file: ../group_vars/overlay_db.yml
+        file: "{{ input_vars_path }}group_vars/overlay_db.yml"
         name: to_compare
 
     - name: Collect vars from hostvars leafs
       ansible.builtin.include_vars:
-        file: ../host_vars/node_vars/{{ inventory_hostname }}.yml
+        file: "{{ input_vars_path }}host_vars/node_vars/{{ inventory_hostname }}.yml"
         name: hostvars_leaf_data
 
     - name: Collect "show run nve"
@@ -63,6 +72,6 @@
     - name: Copying configurations to the repective files ( <hostname>.yml ) under ../host_vars/inc_vars folder
       when: module_output['yaml'] != '{}\n'
       ansible.builtin.copy:
-        mode: preserve
-        dest: ../host_vars/inc_vars/{{ inventory_hostname }}.yml
+        mode: '0660'
+        dest: "{{ input_vars_path }}host_vars/inc_vars/{{ inventory_hostname }}.yml"
         content: "{{ module_output['yaml'] }}"

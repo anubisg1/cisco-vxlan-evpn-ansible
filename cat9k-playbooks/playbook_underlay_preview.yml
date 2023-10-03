@@ -57,7 +57,7 @@
 
     - name: Copy configurations to the respective file ( <hostname>-underlay.txt ) under 'preview_files' folder
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: preview_files/{{ inventory_hostname }}-underlay.txt
         content: "{{ rendered }}"
 

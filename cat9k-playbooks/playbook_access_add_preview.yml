@@ -59,7 +59,7 @@
 
         - name: Copy configurations to respective file ( <inventory_hostname>-{add/inc}-intf.txt ) under 'preview_files' folder
           ansible.builtin.copy:
-            mode: preserve
+            mode: '0660'
             dest: preview_files/{{ inventory_hostname }}-{{ playbook_mode }}-intf.txt
             content: "\n! access interface block \n{{ intf_conf | join('\n') }}"
 

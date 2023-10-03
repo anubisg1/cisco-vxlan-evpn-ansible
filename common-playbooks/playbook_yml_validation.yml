@@ -3,17 +3,24 @@
   hosts: all
   gather_facts: false
   tasks:
-    - name: Collect vars from underlay_db.yml # noqa: run-once[task]
+      # Set db file path and load overlay_db
+    - name: Load and process overlay input file # noqa: run-once[task]
       run_once: true
-      ansible.builtin.include_vars:
-        file: ../group_vars/underlay_db.yml
-        name: underlay_db
+      block:
+        - name: Set overlay db input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
 
-    - name: Collect vars from overlay_db.yml # noqa: run-once[task]
-      run_once: true
-      ansible.builtin.include_vars:
-        file: ../group_vars/overlay_db.yml
-        name: overlay_db
+        - name: Load vars from overlay input file
+          ansible.builtin.include_vars:
+            file: "{{ input_vars_path }}group_vars/overlay_db.yml"
+            name: overlay_db
+
+        - name: Load vars from underlay input file
+          ansible.builtin.include_vars:
+            file: "{{ input_vars_path }}group_vars/underlay_db.yml"
+            name: underlay_db
 
     - name: Process data
       precheck_yml:
