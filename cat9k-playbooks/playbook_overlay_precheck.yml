@@ -5,6 +5,15 @@
   connection: local
 
   tasks:
+      # Set db file path and load overlay_db
+    - name: Load and process overlay input file # noqa: run-once[task]
+      run_once: true
+      block:
+        - name: Set overlay db input file path if not already set
+          when: input_vars_path is not defined
+          ansible.builtin.set_fact:
+            input_vars_path: "../"
+
     # Collecting the show_version data
     - name: Collect "show version"
       ansible.netcommon.cli_command:
@@ -15,7 +24,7 @@
     - name: Run the new module for version
       device_reachability:
         version: "{{ leaf_command_output.stdout_lines }}"
-        fileName: "../group_vars/overlay_db.yml"
+        fileName: "{{ input_vars_path }}group_vars/overlay_db.yml"
       register: result
 
     # collecting the "show run interface loopback" output
@@ -51,7 +60,7 @@
     - name: Getting the loopback ip's from the loopback.txt file
       device_reachability:
         version: "{{ leaf_command_output.stdout_lines }}"
-        fileName: "../group_vars/overlay_db.yml"
+        fileName: "{{ input_vars_path }}group_vars/overlay_db.yml"
         loopback: "{{ item_output }}"
       register: result
 
@@ -66,7 +75,7 @@
     - name: Run the new module for final_result
       device_reachability:
         version: "{{ leaf_command_output.stdout_lines }}"
-        fileName: "../group_vars/overlay_db.yml"
+        fileName: "{{ input_vars_path }}group_vars/overlay_db.yml"
         loopback: "{{ item_output }}"
         ping_output: "{{ command_output_loopback }}"
         host_name: "{{ inventory_hostname }}"
