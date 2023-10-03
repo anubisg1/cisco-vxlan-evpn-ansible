@@ -91,14 +91,14 @@
 
     - name: Copy configurations to respective file ( <hostname>-inc.txt ) under 'preview_files' folder
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: preview_files/{{ inventory_hostname }}-inc.txt
         content: "{{ rendered }}"
 
     - name: Clearing configurations in preview_files/<hostname>-inc.txt if device config is skipped
       when: not file_state.stat.exists
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: preview_files/{{ inventory_hostname }}-inc.txt
         content: ""
 

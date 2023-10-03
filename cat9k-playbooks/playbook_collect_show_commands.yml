@@ -10,7 +10,7 @@
     - name: Construct show commands from host var file for leafs
       when: inventory_hostname in groups['leaf']
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: "output/{{ inventory_hostname }}-show_commands.txt"
         content: "{{ lookup('template', './templates/leaf_show_command.j2') }}"
 
@@ -30,7 +30,7 @@
     - name: Save outputs to output file for Leafs
       when: inventory_hostname in groups['leaf']
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: "output/{{ inventory_hostname }}-show_output.txt"
         content: |
           "{{ leaf_command_buf.stdout_lines | zip(leaf_output.stdout_lines) | to_nice_yaml }}"
@@ -38,7 +38,7 @@
     - name: Construct show commands from host var file for Spines
       when: inventory_hostname in groups['spine']
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: "output/{{ inventory_hostname }}-show_commands.txt"
         content: "{{ lookup('template', './templates/spine_show_command.j2') }}"
 
@@ -58,7 +58,7 @@
     - name: Save outputs to output file for Spines
       when: inventory_hostname in groups['spine']
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: "output/{{ inventory_hostname }}-show_output.txt"
         content: |
           "{{ spine_command_buf.stdout_lines | zip(spine_output.stdout_lines) | to_nice_yaml }}"

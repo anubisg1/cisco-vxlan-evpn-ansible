@@ -32,7 +32,7 @@
     # writing the loopback ip's results to output/loopback.txt
     - name: Write results to local output file
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: output/loopback.txt
         content: |
           {% for host in groups['leaf'] %}

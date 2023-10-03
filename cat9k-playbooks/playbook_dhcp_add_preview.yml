@@ -127,7 +127,7 @@
     - name: Copy configurations to respective file ( <hostname>-dhcp.txt ) under 'preview_files' folder
       ansible.builtin.copy:
         dest: preview_files/{{ inventory_hostname }}-dhcp.txt
-        mode: preserve
+        mode: '0660'
         content: "{{ rendered }}"
 
 

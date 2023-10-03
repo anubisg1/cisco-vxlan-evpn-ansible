@@ -63,6 +63,6 @@
     - name: Copying configurations to the repective files ( <hostname>.yml ) under ../host_vars/inc_vars folder
       when: module_output['yaml'] != '{}\n'
       ansible.builtin.copy:
-        mode: preserve
+        mode: '0660'
         dest: ../host_vars/inc_vars/{{ inventory_hostname }}.yml
         content: "{{ module_output['yaml'] }}"
